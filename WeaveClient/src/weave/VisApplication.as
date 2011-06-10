@@ -74,7 +74,8 @@ package weave
 	import weave.primitives.AttributeHierarchy;
 	import weave.services.DelayedAsyncResponder;
 	import weave.services.LocalAsyncService;
-	import weave.services.ProgressIndicator;
+	import weave.services.ProgressIndicator;	
+	
 	import weave.ui.AlertTextBox;
 	import weave.ui.AlertTextBoxEvent;
 	import weave.ui.AttributeSelectorPanel;
@@ -108,6 +109,7 @@ package weave
 	import weave.utils.DebugUtils;
 	import weave.utils.DrawUtils;
 	import weave.utils.NumberUtils;
+	import weave.visualization.tools.CollaborationTool;
 	import weave.visualization.tools.ColorBinLegendTool;
 	import weave.visualization.tools.CompoundBarChartTool;
 	import weave.visualization.tools.DataTableTool;
@@ -767,7 +769,7 @@ package weave
 				createToolMenuItem(Weave.properties.enableAddScatterplot, "Add Scatterplot", createGlobalObject, [ScatterPlotTool]);
 				createToolMenuItem(Weave.properties.enableAddThermometerTool, "Add Thermometer Tool", createGlobalObject, [ThermometerTool]);
 				createToolMenuItem(Weave.properties.enableAddTimeSliderTool, "Add Time Slider Tool", createGlobalObject, [TimeSliderTool]);	
-
+				createToolMenuItem(Weave.properties.enableAddTimeSliderTool, "Add Collaboration Tool", createGlobalObject, [CollaborationTool]);
 //				_weaveMenu.addSeparatorToMenu(_toolsMenu);
 //				
 //				createToolMenuItem(Weave.properties.enableAddRadViz, "Add RadViz", createGlobalObject, [RadVizTool]);

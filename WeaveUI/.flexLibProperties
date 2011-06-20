@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="false" version="1">
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="1">
   <includeClasses>
     <classEntry path="MXClasses"/>
     <classEntry path="weave.Weave"/>
@@ -126,6 +126,7 @@
     <classEntry path="weave.visualization.plotters.GaugePlotter"/>
     <classEntry path="weave.visualization.plotters.GeometryLabelPlotter"/>
     <classEntry path="weave.visualization.plotters.GeometryPlotter"/>
+    <classEntry path="weave.visualization.plotters.GraphPlotter"/>
     <classEntry path="weave.visualization.plotters.HistogramPlotter"/>
     <classEntry path="weave.visualization.plotters.ImageGlyphPlotter"/>
     <classEntry path="weave.visualization.plotters.LinePlotter"/>
@@ -166,6 +167,7 @@
     <classEntry path="weave.visualization.tools.DataTableTool"/>
     <classEntry path="weave.visualization.tools.DimensionSliderTool"/>
     <classEntry path="weave.visualization.tools.GaugeTool"/>
+    <classEntry path="weave.visualization.tools.GraphTool"/>
     <classEntry path="weave.visualization.tools.HistogramTool"/>
     <classEntry path="weave.visualization.tools.ImageGlyphTool"/>
     <classEntry path="weave.visualization.tools.LineChartTool"/>

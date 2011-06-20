@@ -317,7 +317,7 @@ package weave.utils
 						var genGeomIsPoly:Boolean = genGeom.isPolygon();
 						var genGeomIsLine:Boolean = genGeom.isLine();
 						var genGeomIsPoint:Boolean = genGeom.isPoint();
-						var simplifiedGeom:Vector.<Vector.<BLGNode>> = genGeom.getSimplifiedGeometry(minImportance, bounds);
+						var simplifiedGeom:Vector.<Vector.<BLGNode>> = genGeom.getSimplifiedGeometry(minImportance);
 						
 						// for each part, build the vertices polygon and check for the overlap
 						for (var iPart:int = 0; iPart < simplifiedGeom.length; ++iPart)
@@ -509,7 +509,7 @@ package weave.utils
 								var genGeomIsPoint:Boolean = genGeom.isPoint();
 								var genGeomBounds:IBounds2D = genGeom.bounds;
 								
-								var simplifiedGeom:Vector.<Vector.<BLGNode>> = (geom as GeneralizedGeometry).getSimplifiedGeometry(importance, bounds);
+								var simplifiedGeom:Vector.<Vector.<BLGNode>> = (geom as GeneralizedGeometry).getSimplifiedGeometry(importance);
 
 								for (var i:int = 0; i < simplifiedGeom.length; ++i)
 								{

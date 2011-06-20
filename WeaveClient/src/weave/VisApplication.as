@@ -19,6 +19,7 @@
 
 package weave
 {
+	import flash.display.GraphicsTrianglePath;
 	import flash.display.StageDisplayState;
 	import flash.events.ContextMenuEvent;
 	import flash.events.Event;
@@ -113,6 +114,7 @@ package weave
 	import weave.visualization.tools.DataTableTool;
 	import weave.visualization.tools.DimensionSliderTool;
 	import weave.visualization.tools.GaugeTool;
+	import weave.visualization.tools.GraphTool;
 	import weave.visualization.tools.HistogramTool;
 	import weave.visualization.tools.LineChartTool;
 	import weave.visualization.tools.MapTool;
@@ -766,7 +768,8 @@ package weave
 				createToolMenuItem(Weave.properties.enableAddRScriptEditor, "Add R Script Editor", createGlobalObject, [RTextEditor]);
 				createToolMenuItem(Weave.properties.enableAddScatterplot, "Add Scatterplot", createGlobalObject, [ScatterPlotTool]);
 				createToolMenuItem(Weave.properties.enableAddThermometerTool, "Add Thermometer Tool", createGlobalObject, [ThermometerTool]);
-				createToolMenuItem(Weave.properties.enableAddTimeSliderTool, "Add Time Slider Tool", createGlobalObject, [TimeSliderTool]);	
+				createToolMenuItem(Weave.properties.enableAddTimeSliderTool, "Add Time Slider Tool", createGlobalObject, [TimeSliderTool])	;
+				createToolMenuItem(Weave.properties.enableAddGraphTool, "Add Graph Tool", createGlobalObject, [GraphTool]);	
 
 //				_weaveMenu.addSeparatorToMenu(_toolsMenu);
 //				

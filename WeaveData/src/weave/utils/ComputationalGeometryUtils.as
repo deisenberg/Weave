@@ -20,6 +20,11 @@
 
 package weave.utils
 {
+	import flash.display.Bitmap;
+	import flash.display.BitmapData;
+	import flash.display.Graphics;
+	import flash.display.Shape;
+	import flash.geom.Matrix;
 	import flash.geom.Point;
 	
 	import mx.utils.ObjectUtil;
@@ -280,6 +285,51 @@ package weave.utils
 			return false;
 		}
 		
+		
+		private static const _tempShape:Shape = new Shape();
+		public static function polygonOverlapsPoint2(polygon:Object, x:Number, y:Number):Boolean
+		{
+			if (polygon.length == 0)
+				return false;
+			
+			// render the polygon on the shape
+			var graphics:Graphics = _tempShape.graphics;
+			graphics.clear();
+			graphics.lineStyle(0, 0, 0, true);
+			graphics.beginFill(0, 1);
+			var numPoints:int = polygon.length;
+			var firstX:Number, firstY:Number;
+			for (var vIndex:int = 0; vIndex < numPoints; ++vIndex)
+			{
+				var vertex:Object = polygon[vIndex];
+				if (vIndex == 0)
+				{
+					firstX = vertex.x; 
+					firstY = vertex.y;
+					graphics.moveTo(firstX, firstY);
+					continue;
+				}
+				graphics.lineTo(vertex.x, vertex.y);
+			}
+			
+			graphics.lineTo(firstX, firstY);
+			graphics.endFill();
+			_tempMatrix.identity();
+			_tempMatrix.translate(180, 90);
+			//_tempMatrix.scale(4, -4);
+			_tempBitmap.bitmapData.fillRect(_tempBitmap.bitmapData.rect, 0x00000000);
+			_tempBitmap.bitmapData.draw(_tempShape, _tempMatrix);
+			
+			x = (x + 180);
+			y = (y + 90);
+			var color:int = _tempBitmap.bitmapData.getPixel32(x, y);
+			if (color != 0x00000000)
+				return true;
+			
+			return false;
+		}
+		private static const _tempBitmap:Bitmap= new Bitmap(new BitmapData(360, 180, true));
+		private static const _tempMatrix:Matrix = new Matrix();
 		/**
 		 * polygonOverlapsPoint
 		 * @param polygon An array of objects representing vertices, each having x and y properties.

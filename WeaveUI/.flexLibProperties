@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="1">
+<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="false" version="1">
   <includeClasses>
     <classEntry path="MXClasses"/>
     <classEntry path="weave.Weave"/>
@@ -158,6 +158,7 @@
     <classEntry path="weave.visualization.plotters.styles.SolidLineStyle"/>
     <classEntry path="weave.visualization.tools.BarChartLegendTool"/>
     <classEntry path="weave.visualization.tools.BarChartTool"/>
+    <classEntry path="weave.visualization.tools.CollaborationTool"/>
     <classEntry path="weave.visualization.tools.ColorBinLegendTool"/>
     <classEntry path="weave.visualization.tools.ColormapHistogramTool"/>
     <classEntry path="weave.visualization.tools.CompoundBarChartTool"/>

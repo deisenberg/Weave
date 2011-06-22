@@ -348,7 +348,7 @@ public class SQLUtils
 	/**
 	 * @param connection An SQL Connection
 	 * @param query An SQL query
-	 * @return A CachedRowSet object containing the result of the query
+	 * @return A SQLResult object containing the result of the query
 	 * @throws SQLException
 	 */
 	public static SQLResult getRowSetFromQuery(Connection connection, String query)
@@ -635,7 +635,7 @@ public class SQLUtils
 	/**
 	 * @param connection An SQL Connection
 	 * @param query An SQL query
-	 * @return A CachedRowSet object containing the result of the query
+	 * @return A SQLResult object containing the result of the query
 	 * @throws SQLException
 	 */
 	public static int getRowCountFromUpdateQuery(Connection connection, String query)

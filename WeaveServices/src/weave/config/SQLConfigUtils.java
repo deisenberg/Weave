@@ -71,7 +71,7 @@ public class SQLConfigUtils
 	 * @param config An ISQLConfig interface to a config file
 	 * @param connectionName The name of a connection in the config file
 	 * @param query An SQL Query
-	 * @return A CachedRowSet object containing the result of the SQL query
+	 * @return A SQLResult object containing the result of the SQL query
 	 * @throws RemoteException
 	 * @throws SQLException
 	 */

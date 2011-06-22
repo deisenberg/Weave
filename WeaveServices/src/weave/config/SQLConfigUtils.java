@@ -27,13 +27,12 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import javax.sql.rowset.CachedRowSet;
-
 import weave.config.ISQLConfig.AttributeColumnInfo;
 import weave.config.ISQLConfig.ConnectionInfo;
 import weave.config.ISQLConfig.GeometryCollectionInfo;
 import weave.utils.DebugTimer;
 import weave.utils.ListUtils;
+import weave.utils.SQLResult;
 import weave.utils.SQLUtils;
 
 /**
@@ -76,7 +75,7 @@ public class SQLConfigUtils
 	 * @throws RemoteException
 	 * @throws SQLException
 	 */
-	public static CachedRowSet getRowSetFromQuery(ISQLConfig config, String connectionName, String query) throws SQLException, RemoteException
+	public static SQLResult getRowSetFromQuery(ISQLConfig config, String connectionName, String query) throws SQLException, RemoteException
 	{
 		Connection conn = getStaticReadOnlyConnection(config, connectionName);
 		return SQLUtils.getRowSetFromQuery(conn, query);
@@ -131,7 +130,7 @@ public class SQLConfigUtils
 			throw new RemoteException("getJoinQueryForAttributeColumns() only supports MySQL.");
 		Connection conn = getStaticReadOnlyConnection(config, info1.connection);
 		
-		CachedRowSet crs1, crs2;
+		SQLResult crs1, crs2;
 		String keyCol1, dataCol1, query1;
 		String keyCol2, dataCol2, query2;
 		
@@ -140,16 +139,16 @@ public class SQLConfigUtils
 		if (query1.endsWith(";"))
 			query1 = query1.substring(0, query1.length() - 1);
 		crs1 = SQLUtils.getRowSetFromQuery(conn, query1);
-		keyCol1 = crs1.getMetaData().getColumnName(1);
-		dataCol1 = crs1.getMetaData().getColumnName(2);
+		keyCol1 = crs1.columnNames[0];
+		dataCol1 = crs1.columnNames[1];
 
 		query2 = info2.sqlQuery;
 		query2 = query2.trim();
 		if (query2.endsWith(";"))
 			query2 = query2.substring(0, query2.length() - 1);
 		crs2 = SQLUtils.getRowSetFromQuery(conn, query2);
-		keyCol2 = crs2.getMetaData().getColumnName(1);
-		dataCol2 = crs2.getMetaData().getColumnName(2);
+		keyCol2 = crs2.columnNames[0];
+		dataCol2 = crs2.columnNames[1];
 
 		String combinedQuery = String.format(
 				"select a.`%s` as keyCode, a.`%s` as data1, b.`%s` as data2"
@@ -162,14 +161,14 @@ public class SQLConfigUtils
 		return combinedQuery;
 	}
 
-	public static CachedRowSet getRowSetFromJoinedAttributeColumns(ISQLConfig config, Map<String, String> metadataQueryParams1, Map<String, String> metadataQueryParams2)
+	public static SQLResult getRowSetFromJoinedAttributeColumns(ISQLConfig config, Map<String, String> metadataQueryParams1, Map<String, String> metadataQueryParams2)
 		throws RemoteException, SQLException
 	{
 		String combinedQuery = getJoinQueryForAttributeColumns(config, metadataQueryParams1, metadataQueryParams2);
 
 		List<AttributeColumnInfo> infoList1 = config.getAttributeColumnInfo(metadataQueryParams1);
 		
-		CachedRowSet crs = getRowSetFromQuery(config, infoList1.get(0).connection, combinedQuery);
+		SQLResult crs = getRowSetFromQuery(config, infoList1.get(0).connection, combinedQuery);
 		
 		/*
 		//for debugging

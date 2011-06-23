@@ -86,7 +86,7 @@
 			
 			override public function getSelectableAttributeNames():Array
 			{
-				return ["Color", "Node IDs", "Edge Sources IDs", "Edge Target IDs"];
+				return ["Color", "Node IDs", "Edge Source IDs", "Edge Target IDs"];
 			}
 			override public function getSelectableAttributes():Array
 			{
@@ -164,5 +164,9 @@
 				
 				<!--<ui:ColumnListComponent visTool="{this}" id="edgeColumnList" label="Edges"/>-->
 			</mx:VBox>
+		<mx:VBox id="algorithmPanel" label="Positioning Parameters">
+			<mx:Button id="recomputePositions" click="_plotter.recomputePositions();"/>
+			
+		</mx:VBox>
 	</ui:ControlPanel>
 </SimpleVisTool>

@@ -22,6 +22,7 @@ package weave.visualization.plotters
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
 	import flash.display.Shape;
+	import flash.display.TriangleCulling;
 	import flash.geom.Point;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
@@ -30,6 +31,7 @@ package weave.visualization.plotters
 	import weave.api.data.IAttributeColumn;
 	import weave.api.data.IFilteredKeySet;
 	import weave.api.data.IQualifiedKey;
+	import weave.api.getCallbackCollection;
 	import weave.api.primitives.IBounds2D;
 	import weave.core.LinkableHashMap;
 	import weave.data.AttributeColumns.AlwaysDefinedColumn;
@@ -92,6 +94,8 @@ package weave.visualization.plotters
 		private const tempPoint:Point = new Point(); // temp point used for computing force 
 		private const outputBounds:IBounds2D = new Bounds2D();
 		
+		public function recomputePositions():void { initializeWrappers(); computeLocations(); getCallbackCollection(this).triggerCallbacks(); }
+		
 		private function handleColumnsChange():void
 		{
 			// set the keys
@@ -142,6 +146,18 @@ package weave.visualization.plotters
 					var newEdge:GraphEdge = new GraphEdge();
 					var sourceWrapper:GraphNodeWrapper = _nodeIdToNodeWrapper[idSource];
 					var targetWrapper:GraphNodeWrapper = _nodeIdToNodeWrapper[idTarget];
+					
+					if (!sourceWrapper)
+					{
+						trace('no source node with id: ', idSource, ' exists');
+						continue;
+					}
+					if (!targetWrapper)
+					{
+						trace('no target node with id: ', idTarget, ' exists');
+						continue;
+					}
+						
 					newEdge.id = i;
 					newEdge.source = sourceWrapper.node;
 					newEdge.target = targetWrapper.node;
@@ -262,7 +278,6 @@ package weave.visualization.plotters
 					// determine the next position (don't modify the current position because we need it for calculating KE
 					nodeWrapper.nextPosition.x = nodeWrapper.position.x + nodeWrapper.velocity.x;
 					nodeWrapper.nextPosition.y = nodeWrapper.position.y + nodeWrapper.velocity.y;
-					
 				}
 
 				// calculate the KE and update positions
@@ -378,7 +393,8 @@ package weave.visualization.plotters
 		 */
 		override public function getBackgroundDataBounds():IBounds2D
 		{
-			return getReusableBounds(-1, -1, 1, 1);
+			return outputBounds.cloneBounds();
+			//getReusableBounds(-1, -1, 1, 1);
 		}
 
 /*		private function parseData():void

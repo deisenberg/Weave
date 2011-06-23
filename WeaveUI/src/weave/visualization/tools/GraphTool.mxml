@@ -60,7 +60,7 @@
 				getCallbackCollection(_plotter).addImmediateCallback(this, invalidateAxes);
 				invalidateAxes();
 				
-				var count:int = getDefaultColumnsOfMostCommonKeyType().length;
+				/* var count:int = getDefaultColumnsOfMostCommonKeyType().length;
 				var columnsToInit:Array = [];
 				for (var i:int = 0; i < count; i++)
 				{
@@ -68,27 +68,29 @@
 				}
 
 				if(columnsToInit.length > 0)
-					(initColumnDefaults as Function).apply(null, columnsToInit);
+					(initColumnDefaults as Function).apply(null, columnsToInit); */
 				
 				toolTitle.addImmediateCallback(this, updateTitle);
-				_plotter.columns.addImmediateCallback(this, updateProbeColumns);
+				_plotter.nodesColumn.addImmediateCallback(this, updateProbeColumns);
 			}
 			
 			override protected function childrenCreated():void
 			{
 				super.childrenCreated();
 
-				columnList.hashMap = _plotter.columns;
 				(colorComponent as DynamicColumnComponent).dynamicObject = colorColumn;
+				(nodeComponent as DynamicColumnComponent).dynamicObject = nodesColumn;
+				(edgeSourceComponent as DynamicColumnComponent).dynamicObject = edgeSourceColumn;
+				(edgeTargetComponent as DynamicColumnComponent).dynamicObject = edgeTargetColumn;
 			}
 			
 			override public function getSelectableAttributeNames():Array
 			{
-				return ["Color","Anchor Dimensions"];
+				return ["Color", "Node IDs", "Edge Sources IDs", "Edge Target IDs"];
 			}
 			override public function getSelectableAttributes():Array
 			{
-				return [colorColumn,_plotter.columns];
+				return [_plotter.colorColumn, _plotter.nodesColumn, _plotter.edgeSourceColumn, _plotter.edgeTargetColumn];
 			}
 			
 			public const includeToolAttributesInProbe:LinkableBoolean = registerLinkableChild(this, new LinkableBoolean(true), updateProbeColumns);
@@ -97,7 +99,7 @@
 			{
 				if(includeToolAttributesInProbe.value)
 				{
-					visualization.additionalProbeColumns = _plotter.columns.getObjects(IAttributeColumn);
+					visualization.additionalProbeColumns = [ _plotter.nodesColumn ];//.getObjects(IAttributeColumn);
 					if(visualization.additionalProbeColumns.length == 0) visualization.additionalProbeColumns = null;
 				}
 				else visualization.additionalProbeColumns = null;
@@ -111,36 +113,14 @@
 			
 			private function updateTitle():void
 			{
-				if (toolTitle.value == null)
-				{				
-					// try to get unique attribute names separated by commas
-					// should probably be unique names for parallel coordinates, single name for line chart with years listed...?
-					var newTitle:String = "Graph of ";
-					
-					var uniqueColumns:Dictionary = new Dictionary();
-					
-					for each(var column:IAttributeColumn in _plotter.columns.getObjects(IAttributeColumn) )
-					{
-						uniqueColumns[ColumnUtils.getTitle(column)] = column;
-					}
-					
-					for (var uniqueTitle:String in uniqueColumns)
-					{
-						newTitle += uniqueTitle + ", ";
-					}
-					
-					if(newTitle.charAt(newTitle.length-1) == ",")
-						newTitle = newTitle.substr(0, newTitle.length-2);
-					
-					title = newTitle;
-				}
-			}
+				title = "Graph Tool";
+ 			}
 			
-			public function get colorColumn():DynamicColumn
-			{
-				var fc:FilteredColumn = Weave.root.getObject(Weave.DEFAULT_COLOR_DATA_COLUMN) as FilteredColumn;
-				return fc.internalDynamicColumn;
-			}
+			public function get colorColumn():DynamicColumn { return _plotter.colorColumn; }
+			public function get nodesColumn():DynamicColumn { return _plotter.nodesColumn; }
+			public function get edgeSourceColumn():DynamicColumn { return _plotter.edgeSourceColumn; }
+			public function get edgeTargetColumn():DynamicColumn { return _plotter.edgeTargetColumn; }
+				
 			
 			private function alphaSliderFormatFunction(item:Number):String {
 				//return int(100 - (item * 100)) + "% Transparent";
@@ -171,14 +151,18 @@
 				</mx:HBox>
 			</mx:VBox>
 			
-			<mx:VBox id="attributesPanel" label="Attributes for Rad Viz">
+			<mx:VBox id="attributesPanel" label="Attributes for Graph">
 				<ui:DynamicColumnComponent visTool="{this}" id="colorComponent" label="Color"/>
 				<userControls:ControlsSubsetBox>
 					<mx:CheckBox id="probeColumnsCheckBox" label="Include tool attributes in probe tooltip"
 								 toolTip="Checking this box makes all of the following attributes visible in this tool's probe tooltip"
 								 initialize="linkBindableProperty(includeToolAttributesInProbe,probeColumnsCheckBox,'selected')"/>
 				</userControls:ControlsSubsetBox>
-				<ui:ColumnListComponent visTool="{this}" id="columnList" label="Anchor Dimensions"/>
+				<ui:DynamicColumnComponent visTool="{this}" id="nodeComponent" label="Nodes"/>
+				<ui:DynamicColumnComponent visTool="{this}" id="edgeSourceComponent" label="Edge Sources"/>
+				<ui:DynamicColumnComponent visTool="{this}" id="edgeTargetComponent" label="Edge Targets"/>
+				
+				<!--<ui:ColumnListComponent visTool="{this}" id="edgeColumnList" label="Edges"/>-->
 			</mx:VBox>
 	</ui:ControlPanel>
 </SimpleVisTool>

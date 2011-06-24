@@ -190,6 +190,7 @@ package weave.visualization.layers
 				fullDataBounds.includeBounds((plotLayer.spatialIndex as SpatialIndex).collectiveBounds);
 				var bg:IBounds2D = plotLayer.plotter.getBackgroundDataBounds();
 				fullDataBounds.includeBounds(bg);
+				//trace(fullDataBounds);
 			}
 		}
 		

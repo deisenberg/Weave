@@ -97,13 +97,14 @@
 			
 			private function updateProbeColumns():void
 			{
-				if(includeToolAttributesInProbe.value)
+				if (includeToolAttributesInProbe.value)
 				{
 					visualization.additionalProbeColumns = [ _plotter.nodesColumn ];//.getObjects(IAttributeColumn);
-					if(visualization.additionalProbeColumns.length == 0) visualization.additionalProbeColumns = null;
+					if (visualization.additionalProbeColumns.length == 0) 
+						visualization.additionalProbeColumns = null;
 				}
-				else visualization.additionalProbeColumns = null;
-				//else ProbeTextUtils.probedColumns.copyObject('probedColumns',oldProbeColumns);
+				else 
+					visualization.additionalProbeColumns = null;
 			}
 			
 			private function invalidateAxes():void
@@ -165,8 +166,32 @@
 				<!--<ui:ColumnListComponent visTool="{this}" id="edgeColumnList" label="Edges"/>-->
 			</mx:VBox>
 		<mx:VBox id="algorithmPanel" label="Positioning Parameters">
-			<mx:Button id="recomputePositions" click="_plotter.recomputePositions();"/>
-			
+			<mx:HBox>
+				<mx:Label text="Minimum Distance Change"/>
+				<mx:TextInput id="minimumEnergyTxtInput" initialize="linkBindableProperty(_plotter.minimumEnergy, minimumEnergyTxtInput, 'text')"/>
+			</mx:HBox>
+			<mx:HBox>			
+				<mx:Label text="Attraction Constant"/>
+				<mx:TextInput id="attractionTxtInput" initialize="linkBindableProperty(_plotter.attractionConstant, attractionTxtInput, 'text')"/>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Repulsion Constant"/>
+				<mx:TextInput id="repulsionTxtInput" initialize="linkBindableProperty(_plotter.repulsionConstant, repulsionTxtInput, 'text')"/>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Node Separation"/>
+				<mx:TextInput id="separationTxtInput" initialize="linkBindableProperty(_plotter.nodeSeparation, separationTxtInput, 'text')"/>
+			</mx:HBox>
+
+			<mx:HBox>
+				<mx:Label text="Damping Constant"/>
+				<mx:TextInput id="dampingTxtInput" initialize="linkBindableProperty(_plotter.dampingConstant, dampingTxtInput, 'text')"/>
+			</mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Maximum Iterations"/>
+				<mx:TextInput id="maxIterationsTxtInput" initialize="linkBindableProperty(_plotter.maxIterations, maxIterationsTxtInput, 'text')"/>
+			</mx:HBox>
+			<mx:Button id="recomputePositions" label="Recalculate Node Positions" click="_plotter.recomputePositions()"/>
 		</mx:VBox>
 	</ui:ControlPanel>
 </SimpleVisTool>

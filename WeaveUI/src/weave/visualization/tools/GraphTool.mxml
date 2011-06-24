@@ -191,6 +191,11 @@
 				<mx:Label text="Maximum Iterations"/>
 				<mx:TextInput id="maxIterationsTxtInput" initialize="linkBindableProperty(_plotter.maxIterations, maxIterationsTxtInput, 'text')"/>
 			</mx:HBox>
+			<mx:HBox>
+				<mx:Label text="Algorithm"/>
+				<mx:ComboBox id="algorithmChoice" dataProvider="{[ 'Force Directed', 'FADE' ]}" 
+							 initialize="linkBindableProperty(_plotter.currentAlgorithm, algorithmChoice, 'selectedItem')"/>
+			</mx:HBox>
 			<mx:Button id="recomputePositions" label="Recalculate Node Positions" click="_plotter.recomputePositions()"/>
 		</mx:VBox>
 	</ui:ControlPanel>

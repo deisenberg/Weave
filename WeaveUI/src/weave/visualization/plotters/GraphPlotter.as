@@ -24,6 +24,7 @@ package weave.visualization.plotters
 	import flash.display.Shape;
 	import flash.display.TriangleCulling;
 	import flash.geom.Point;
+	import flash.sampler.DeleteObjectSample;
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	
@@ -35,8 +36,10 @@ package weave.visualization.plotters
 	import weave.api.data.IQualifiedKey;
 	import weave.api.getCallbackCollection;
 	import weave.api.primitives.IBounds2D;
+	import weave.core.ErrorManager;
 	import weave.core.LinkableHashMap;
 	import weave.core.LinkableNumber;
+	import weave.core.LinkableString;
 	import weave.data.AttributeColumns.AlwaysDefinedColumn;
 	import weave.data.AttributeColumns.ColorColumn;
 	import weave.data.AttributeColumns.DynamicColumn;
@@ -69,13 +72,30 @@ package weave.visualization.plotters
 			
 			registerNonSpatialProperties(Weave.properties.axisFontUnderline,Weave.properties.axisFontSize,Weave.properties.axisFontColor);
 		}
-
-		private var _edges:Array = [];
-		private var _idToNode:Array = [];
-		private var _idToConnectedNodes:Array = [];
+	
+		/**
+		 * Recompute the positions of the nodes in the graph and then draw the plot.
+		 */
+		public function recomputePositions():void 
+		{ 
+			try 
+			{
+				initializeWrappers(); 
+				_algorithm(); 
+			} 
+			catch (e:Error)
+			{
+				ErrorManager.reportError(e);
+			}
+		}
+		
+		private var _edges:Object = [];
+		private var _idToNode:Object = [];
+		private var _idToConnectedNodes:Object = [];
 		
 		public const lineStyle:DynamicLineStyle = newNonSpatialProperty(DynamicLineStyle);
-		
+		[Bindable] public var algorithms:Array = [ 'Force Directed', 'FADE' ];
+		private var _algorithm:Function = null;
 		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle)
 		
 		public const colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
@@ -83,24 +103,27 @@ package weave.visualization.plotters
 		public const edgeSourceColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const positionBounds:LinkableBounds2D = registerSpatialProperty(new LinkableBounds2D());
-		
-		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(5)); // radius of the circles
+		public const currentAlgorithm:LinkableString = registerSpatialProperty(new LinkableString('Force Directed'), changeAlgorithm);
+		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
 		public const minimumEnergy:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
 		public const attractionConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
 		public const repulsionConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(1)); // coulumb's law constant
 		public const dampingConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.75)); // the amount of damping on the forces
 		public const maxIterations:LinkableNumber = registerSpatialProperty(new LinkableNumber(1000)); // max iterations
 		public const nodeSeparation:LinkableNumber = registerSpatialProperty(new LinkableNumber(15)); // the minimum separation (this is used for the equilibrium point
+
 		
-		private const netForce:Point = new Point(); // the force vector
-		private const tempPoint:Point = new Point(); // temp point used for computing force 
-		private var outputBounds:IBounds2D = new Bounds2D();
+		private var _repulsionCache:Dictionary;
+		private var _attractionCache:Dictionary;
 		
-		public function recomputePositions():void 
-		{ 
-			initializeWrappers(); 
-			computeLocations(); 
+		private function changeAlgorithm():void
+		{
+			if (currentAlgorithm.value == 'Force Directed')
+				_algorithm = forceDirected;
+			else
+				_algorithm = fade;
 		}
+		private function fade():void { }
 		
 		private function handleColumnsChange():void
 		{
@@ -116,19 +139,64 @@ package weave.visualization.plotters
 				return;
 			if (edgeSourceColumn.keys.length != edgeTargetColumn.keys.length)
 				return;
-
+			
+			// verify source and target column have same keytype
+			var sourceKey:IQualifiedKey = edgeSourceColumn.keys[0];
+			var targetKey:IQualifiedKey = edgeTargetColumn.keys[0];
+			if (sourceKey.keyType != targetKey.keyType)
+				return;
+			
 			// setup the lookups and objects
 			setupData();
-									
-			// initialize everything to positions and velocities
-			initializeWrappers();
-			
-			// compute their locations
-			computeLocations();
-		}
 
+			recomputePositions();
+		}
+		private function cachedLookup(dictionary:Dictionary, a:GraphNode, b:GraphNode):Point
+		{
+			if (dictionary[a] == undefined)
+			{
+				dictionary[a] = new Dictionary();
+				return null;
+			}
+			
+			var returnValue:Point = dictionary[a][b];
+			if (returnValue != null)
+				return returnValue;
+			
+			if (dictionary[b] == undefined)
+			{
+				dictionary[b] = new Dictionary();
+				return null;
+			}
+			
+			returnValue = dictionary[b][a];
+			if (returnValue == null)
+				return null;
+			returnValue = returnValue.clone();
+			returnValue.x = 0 - returnValue.x;
+			returnValue.y = 0 - returnValue.y;
+			return returnValue;
+		}
+		private function cachedSet(dictionary:Dictionary, a:GraphNode, b:GraphNode, leftPoint:Point):void
+		{
+			if (dictionary[a] == undefined)
+				dictionary[a] = new Dictionary();
+			if (dictionary[b] == undefined)
+				dictionary[b] = new Dictionary();
+			
+			var rightPoint:Point = new Point();
+			rightPoint.x = 0 - leftPoint.x;
+			rightPoint.y = 0 - leftPoint.y;
+			dictionary[a][b] = leftPoint;
+			dictionary[b][a] = rightPoint;
+		}
+		
 		private function hookeAttraction(a:GraphNode, b:GraphNode, output:Point = null):Point
 		{
+			var cachedPoint:Point = cachedLookup(_attractionCache, a, b);
+			if (cachedPoint)
+				return cachedPoint;
+
 			if (!output) 
 				output = new Point();
 			
@@ -136,24 +204,23 @@ package weave.visualization.plotters
 			var dy:Number = b.position.y - a.position.y;
 			var dx2:Number = dx * dx;
 			var dy2:Number = dy * dy;			
-			var resultantVectorMagnitude:Number = Math.sqrt(dx2 + dy2);
+			var distance:Number = Math.sqrt(dx2 + dy2);
+			var forceMagnitude:Number = attractionConstant.value * (distance - nodeSeparation.value); 
 			
-			var forceMagnitude:Number = attractionConstant.value * Math.max(resultantVectorMagnitude - nodeSeparation.value, 0); // F = -kx 
-			var angle:Number = Math.atan2(dy, dx); // y parameter first--go Adobe
+			output.x = forceMagnitude * dx / distance;
+			output.y = forceMagnitude * dy / distance;
 
-			if (isNaN(angle))
-				trace('nan angle attraction');
-			
-			output.x = forceMagnitude * Math.cos(angle);
-			output.y = forceMagnitude * Math.sin(angle);
-			
-			//trace(dx, dy, output);
 			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
+			cachedSet(_attractionCache, a, b, output);
 			return output; 
 		}
 		
 		private function coulumbRepulsion(a:GraphNode, b:GraphNode, output:Point = null):Point
 		{
+			var cachedPoint:Point = cachedLookup(_repulsionCache, a, b);
+			if (cachedPoint)
+				return cachedPoint;
+			
 			if (!output) 
 				output = new Point();
 			
@@ -162,20 +229,17 @@ package weave.visualization.plotters
 			var dx2:Number = dx * dx;
 			var dy2:Number = dy * dy;			
 			var resultantVectorMagnitude:Number = dx2 + dy2;
-			
+			var distance:Number = Math.sqrt(resultantVectorMagnitude);
 			var forceMagnitude:Number = repulsionConstant.value / resultantVectorMagnitude; 
-			var angle:Number = Math.atan2(dy, dx); // y is first parameter--read Adobe's documentation online
 			
-			if (isNaN(angle))
-				trace('nan angle repulsion');
-			
-			output.x = forceMagnitude * Math.cos(angle);
-			output.y = forceMagnitude * Math.sin(angle);
-			
+			output.x = forceMagnitude * dx / distance;
+			output.y = forceMagnitude * dy / distance;
+
 			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
+			cachedSet(_repulsionCache, a, b, output);
 			return output;
 		}
-		private function computeLocations():IBounds2D
+		private function forceDirected():IBounds2D
 		{
 			outputBounds.reset();
 			var currentNode:GraphNode;
@@ -188,10 +252,22 @@ package weave.visualization.plotters
 			var iterations:int = 0;
 			while (true)
 			{
+				_repulsionCache = new Dictionary();
+				_attractionCache = new Dictionary();
+				
 				for each (currentNode in _idToNode)
 				{
 					netForce.x = 0;
 					netForce.y = 0;
+					
+					// calculate edge attraction in connected nodes
+					var connectedNodes:Array = _idToConnectedNodes[currentNode.id];
+					for each (var connectedNode:GraphNode in connectedNodes)
+					{
+						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
+						netForce.x += tempAttraction.x;
+						netForce.y += tempAttraction.y;
+					}
 					
 					// calculate repulsion for every node except
 					for each (var otherNode:GraphNode in _idToNode)
@@ -204,14 +280,9 @@ package weave.visualization.plotters
 						netForce.y += tempRepulsion.y;
 					}
 					
-					// calculate edge attraction in connected nodes
-					var connectedNodes:Array = _idToConnectedNodes[currentNode.id];
-					for each (var connectedNode:GraphNode in connectedNodes)
-					{
-						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
-						netForce.x += tempAttraction.x;
-						netForce.y += tempAttraction.y;
-					}
+					// TODO: handle unconnected nodes
+					
+					
 					//trace(currentNode.id, '\t', netForce.x, netForce.y);
 					
 					// calculate velocity
@@ -231,7 +302,7 @@ package weave.visualization.plotters
 					var nextPos:Point = gnw.nextPosition;
 					var dx:Number = pos.x - nextPos.x;
 					var dy:Number = pos.y - nextPos.y;
-					kineticEnergy += Math.sqrt(dx * dx + dy * dy);
+					kineticEnergy += Math.sqrt(dx * dx + dy * dy); // KE = .5 M V^2, so ignore constants and just go for distance which is proportional to V
 
 					gnw.position.x = nextPos.x;
 					gnw.position.y = nextPos.y;
@@ -255,6 +326,7 @@ package weave.visualization.plotters
 			return outputBounds;
 		}
 		
+		//private var tempShape:Shape = new Shape();
 		override public function drawPlot(recordKeys:Array, dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
 		{
 			if (recordKeys.length == 0)
@@ -263,7 +335,6 @@ package weave.visualization.plotters
 			_currentDataBounds.copyFrom(dataBounds);
 			_currentScreenBounds.copyFrom(screenBounds);
 
-			var tempShape:Shape = new Shape();
 			var graphics:Graphics = tempShape.graphics;
 			graphics.clear();
 			var i:int;
@@ -274,6 +345,42 @@ package weave.visualization.plotters
 			var yMax:Number = _currentDataBounds.getYMax();
 			var width:Number = _currentDataBounds.getWidth();
 			var height:Number = _currentDataBounds.getHeight();
+			var x:Number;
+			var y:Number;
+			
+			//lineStyle.beginLineStyle(recordKey, graphics);				
+			//fillStyle.beginFillStyle(recordKey, graphics);
+			//graphics.beginFill(0xFF0000, 1);
+			//graphics.lineStyle(1, 0x000000, .5);
+									
+			// loop through each node, drawing it
+			for each (var key:IQualifiedKey in recordKeys)
+			{
+				var id:int = nodesColumn.getValueFromKey(key, int);
+				var node:GraphNode = _idToNode[id];
+				x = node.position.x;
+				y = node.position.y;
+				projectPoint(x, y);
+									
+				lineStyle.beginLineStyle(key, graphics);				
+				fillStyle.beginFillStyle(key, graphics);
+				
+				graphics.drawCircle(screenPoint.x, screenPoint.y, radius.value);
+			}
+
+			//graphics.endFill();
+			destination.draw(tempShape, null, null, null, null, false);
+		}
+		
+		override public function drawBackground(dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
+		{
+			_currentDataBounds.copyFrom(dataBounds);
+			_currentScreenBounds.copyFrom(screenBounds);
+
+			var graphics:Graphics = tempShape.graphics;
+			graphics.clear();
+			var i:int;
+			var count:int = 0;
 			var x:Number;
 			var y:Number;
 			
@@ -295,15 +402,6 @@ package weave.visualization.plotters
 				graphics.lineTo(screenPoint.x, screenPoint .y);
 			}
 			
-			// loop through each node, drawing what it's connected to
-			for each (var nodeWrapper:GraphNode in _idToNode)
-			{
-				x = nodeWrapper.position.x;
-				y = nodeWrapper.position.y;
-				projectPoint(x, y);
-									
-				graphics.drawCircle(screenPoint.x, screenPoint.y, radius.value);
-			}
 			graphics.endFill();
 			destination.draw(tempShape, null, null, null, null, false);
 		}
@@ -388,6 +486,11 @@ package weave.visualization.plotters
 						trace('no target node with id: ', idTarget, ' exists');
 						continue;
 					}
+					if (source == target)
+					{
+						trace('cannot have nodes connected to themselves');
+						continue;
+					}
 						
 					newEdge.id = i;
 					newEdge.source = source;
@@ -404,7 +507,7 @@ package weave.visualization.plotters
 				}
 			}
 		}
-
+		
 		/**
 		 * Set all of the positions to random values and zero the velocities.
 		 */
@@ -413,6 +516,11 @@ package weave.visualization.plotters
 			var i:int = 0;
 			for each (var node:GraphNode in _idToNode)
 			{
+				if (node == null)
+				{
+					trace('here');
+					continue;
+				}
 				node.position.x = Math.random();
 				node.position.y = Math.random();
 				node.velocity.x = 0;
@@ -429,5 +537,10 @@ package weave.visualization.plotters
 			screenPoint.y = y;
 			_currentDataBounds.projectPointTo(screenPoint, _currentScreenBounds);
 		}
+
+		// reusable objects
+		private const netForce:Point = new Point(); // the force vector
+		private const tempPoint:Point = new Point(); // temp point used for computing force 
+		private var outputBounds:IBounds2D = new Bounds2D(); 
 	}
 }

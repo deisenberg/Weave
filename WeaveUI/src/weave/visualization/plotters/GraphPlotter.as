@@ -214,7 +214,6 @@ package weave.visualization.plotters
 			cachedSet(_attractionCache, a, b, output);
 			return output; 
 		}
-		
 		private function coulumbRepulsion(a:GraphNode, b:GraphNode, output:Point = null):Point
 		{
 			var cachedPoint:Point = cachedLookup(_repulsionCache, a, b);

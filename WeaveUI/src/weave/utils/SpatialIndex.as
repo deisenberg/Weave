@@ -284,12 +284,10 @@ package weave.utils
 		 */
 		public function getKeysOverlappingBounds(bounds:IBounds2D, minImportance:Number = 0):Array
 		{
-			var keys:Array;
+			var keys:Array = getKeysOverlappingCollectiveBounds(bounds);
 			// if this index isn't for an IPlotterWithGeometries OR the user wants legacy probing
 			if (_keyToGeometriesMap == null || !Weave.properties.enableGeometryProbing.value == true)
-				return getKeysOverlappingCollectiveBounds(bounds, 0);
-			else			
-				keys = getKeysOverlappingCollectiveBounds(bounds, minImportance);
+				return keys;
 			
 			// if there are 0 keys
 			if (keys.length == 0)

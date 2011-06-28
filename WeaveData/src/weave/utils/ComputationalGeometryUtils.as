@@ -26,10 +26,14 @@ package weave.utils
 	import flash.display.Shape;
 	import flash.geom.Matrix;
 	import flash.geom.Point;
+	import flash.utils.flash_proxy;
 	
+	import mx.core.Application;
+	import mx.core.mx_internal;
 	import mx.utils.ObjectUtil;
 	
 	import weave.api.primitives.IBounds2D;
+	import weave.core.StageUtils;
 	import weave.primitives.Bounds2D;
 
 	/**
@@ -233,8 +237,9 @@ package weave.utils
 				return true;
 			a = polygon1[0];
 			return polygonOverlapsPoint(polygon2, a.x, a.y);
+
 		}
-		
+
 		/**
 		 * polygonIntersectsLine
 		 * @param polygon An array of objects representing vertices, each having x and y properties.
@@ -285,13 +290,9 @@ package weave.utils
 			return false;
 		}
 		
-		
 		private static const _tempShape:Shape = new Shape();
-		public static function polygonOverlapsPoint2(polygon:Object, x:Number, y:Number):Boolean
+		private static function polygonOverlapsPoint2(polygon:Object, x:Number, y:Number):Boolean
 		{
-			if (polygon.length == 0)
-				return false;
-			
 			// render the polygon on the shape
 			var graphics:Graphics = _tempShape.graphics;
 			graphics.clear();
@@ -328,7 +329,7 @@ package weave.utils
 			
 			return false;
 		}
-		private static const _tempBitmap:Bitmap= new Bitmap(new BitmapData(360, 180, true));
+		private static const _tempBitmap:Bitmap = new Bitmap(new BitmapData(360, 180, true));
 		private static const _tempMatrix:Matrix = new Matrix();
 		/**
 		 * polygonOverlapsPoint
@@ -341,6 +342,8 @@ package weave.utils
 		{
 			if (polygon.length == 0)
 				return false;
+			//return polygonOverlapsPoint2(polygon, x, y);
+
 			var riCount:int = 0; // number of ray intersections
 			var riIndex:int; // ray intersection index
 			var segSide:int;

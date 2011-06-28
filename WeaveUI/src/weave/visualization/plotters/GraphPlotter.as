@@ -40,6 +40,7 @@ package weave.visualization.plotters
 	import weave.core.LinkableHashMap;
 	import weave.core.LinkableNumber;
 	import weave.core.LinkableString;
+	import weave.core.StageUtils;
 	import weave.data.AttributeColumns.AlwaysDefinedColumn;
 	import weave.data.AttributeColumns.ColorColumn;
 	import weave.data.AttributeColumns.DynamicColumn;
@@ -80,7 +81,9 @@ package weave.visualization.plotters
 		{ 
 			try 
 			{
-				initializeWrappers(); 
+				resetAllNodes();
+				_iterations = 0;
+				_nextIncrement = 0;
 				_algorithm(); 
 			} 
 			catch (e:Error)
@@ -94,25 +97,26 @@ package weave.visualization.plotters
 		private var _idToConnectedNodes:Object = [];
 		
 		public const lineStyle:DynamicLineStyle = newNonSpatialProperty(DynamicLineStyle);
-		[Bindable] public var algorithms:Array = [ 'Force Directed', 'FADE' ];
+		[Bindable] public var algorithms:Array = [ 'Force Directed', 'FADE', 'Incremental' ];
 		private var _algorithm:Function = null;
 		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle)
 		
-		public const colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
-		public const nodesColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const edgeSourceColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const positionBounds:LinkableBounds2D = registerSpatialProperty(new LinkableBounds2D());
-		public const currentAlgorithm:LinkableString = registerSpatialProperty(new LinkableString('Force Directed'), changeAlgorithm);
-		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
-		public const minimumEnergy:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
-		public const attractionConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
-		public const repulsionConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(1)); // coulumb's law constant
-		public const dampingConstant:LinkableNumber = registerSpatialProperty(new LinkableNumber(0.75)); // the amount of damping on the forces
-		public const maxIterations:LinkableNumber = registerSpatialProperty(new LinkableNumber(1000)); // max iterations
-		public const nodeSeparation:LinkableNumber = registerSpatialProperty(new LinkableNumber(15)); // the minimum separation (this is used for the equilibrium point
+		public const colorColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn());
+		public const nodesColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
+		public const edgeSourceColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
+		public const edgeTargetColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
+		public const positionBounds:LinkableBounds2D = registerNonSpatialProperty(new LinkableBounds2D());
+		public const currentAlgorithm:LinkableString = registerNonSpatialProperty(new LinkableString('Force Directed'), changeAlgorithm);
+		public const radius:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(2)); // radius of the circles
+		public const minimumEnergy:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
+		public const attractionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
+		public const repulsionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(1)); // coulumb's law constant
+		public const dampingConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.75)); // the amount of damping on the forces
+		public const maxIterations:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(1000), handleIterations); // max iterations
+		//private const callbackIncrement:LinkableNumber = registerSpatialProperty(new LinkableNumber(10000));
+		public const nodeSeparation:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(15)); // the minimum separation (this is used for the equilibrium point
 
-		
+		private function handleIterations():void { }
 		private var _repulsionCache:Dictionary;
 		private var _attractionCache:Dictionary;
 		
@@ -120,124 +124,20 @@ package weave.visualization.plotters
 		{
 			if (currentAlgorithm.value == 'Force Directed')
 				_algorithm = forceDirected;
-			else
+			else if (currentAlgorithm.value == 'FADE')
 				_algorithm = fade;
+			else if (currentAlgorithm.value == 'Incremental')
+				_algorithm = incremental;
 		}
 		private function fade():void { }
-		
-		private function handleColumnsChange():void
-		{
-			_idToNode.length = 0;
-			_idToConnectedNodes.length = 0;
-			_edges.length = 0;
-			
-			// set the keys
-			setKeySource(nodesColumn);
-			
-			// if we don't have the required keys, do nothing
-			if (nodesColumn.keys.length == 0 || edgeSourceColumn.keys.length == 0 || edgeTargetColumn.keys.length == 0)
-				return;
-			if (edgeSourceColumn.keys.length != edgeTargetColumn.keys.length)
-				return;
-			
-			// verify source and target column have same keytype
-			var sourceKey:IQualifiedKey = edgeSourceColumn.keys[0];
-			var targetKey:IQualifiedKey = edgeTargetColumn.keys[0];
-			if (sourceKey.keyType != targetKey.keyType)
-				return;
-			
-			// setup the lookups and objects
-			setupData();
 
-			recomputePositions();
-		}
-		private function cachedLookup(dictionary:Dictionary, a:GraphNode, b:GraphNode):Point
+		private function incremental():void
 		{
-			if (dictionary[a] == undefined)
-			{
-				dictionary[a] = new Dictionary();
-				return null;
-			}
 			
-			var returnValue:Point = dictionary[a][b];
-			if (returnValue != null)
-				return returnValue;
-			
-			if (dictionary[b] == undefined)
-			{
-				dictionary[b] = new Dictionary();
-				return null;
-			}
-			
-			returnValue = dictionary[b][a];
-			if (returnValue == null)
-				return null;
-			returnValue = returnValue.clone();
-			returnValue.x = 0 - returnValue.x;
-			returnValue.y = 0 - returnValue.y;
-			return returnValue;
 		}
-		private function cachedSet(dictionary:Dictionary, a:GraphNode, b:GraphNode, leftPoint:Point):void
-		{
-			if (dictionary[a] == undefined)
-				dictionary[a] = new Dictionary();
-			if (dictionary[b] == undefined)
-				dictionary[b] = new Dictionary();
-			
-			var rightPoint:Point = new Point();
-			rightPoint.x = 0 - leftPoint.x;
-			rightPoint.y = 0 - leftPoint.y;
-			dictionary[a][b] = leftPoint;
-			dictionary[b][a] = rightPoint;
-		}
-		
-		private function hookeAttraction(a:GraphNode, b:GraphNode, output:Point = null):Point
-		{
-			var cachedPoint:Point = cachedLookup(_attractionCache, a, b);
-			if (cachedPoint)
-				return cachedPoint;
 
-			if (!output) 
-				output = new Point();
-			
-			var dx:Number = b.position.x - a.position.x;
-			var dy:Number = b.position.y - a.position.y;
-			var dx2:Number = dx * dx;
-			var dy2:Number = dy * dy;			
-			var distance:Number = Math.sqrt(dx2 + dy2);
-			var forceMagnitude:Number = attractionConstant.value * (distance - nodeSeparation.value); 
-			
-			output.x = forceMagnitude * dx / distance;
-			output.y = forceMagnitude * dy / distance;
-
-			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
-			cachedSet(_attractionCache, a, b, output);
-			return output; 
-		}
-		private function coulumbRepulsion(a:GraphNode, b:GraphNode, output:Point = null):Point
-		{
-			var cachedPoint:Point = cachedLookup(_repulsionCache, a, b);
-			if (cachedPoint)
-				return cachedPoint;
-			
-			if (!output) 
-				output = new Point();
-			
-			var dx:Number = a.position.x - b.position.x;
-			var dy:Number = a.position.y - b.position.y;
-			var dx2:Number = dx * dx;
-			var dy2:Number = dy * dy;			
-			var resultantVectorMagnitude:Number = dx2 + dy2;
-			var distance:Number = Math.sqrt(resultantVectorMagnitude);
-			var forceMagnitude:Number = repulsionConstant.value / resultantVectorMagnitude; 
-			
-			output.x = forceMagnitude * dx / distance;
-			output.y = forceMagnitude * dy / distance;
-
-			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
-			cachedSet(_repulsionCache, a, b, output);
-			return output;
-		}
+		private var _iterations:int = 0;
+		private var _nextIncrement:int = 0;
 		private function forceDirected():IBounds2D
 		{
 			outputBounds.reset();
@@ -248,12 +148,14 @@ package weave.visualization.plotters
 			var timeStep:Number = .5;
 			
 			var tempDistance:Number;
-			var iterations:int = 0;
-			while (true)
+			var callbackIncrement:int = 50;
+			_nextIncrement += callbackIncrement;
+			var iterationsDelayed:Boolean = false;
+			for (; _iterations < maxIterations.value; ++_iterations)
 			{
-				_repulsionCache = new Dictionary();
-				_attractionCache = new Dictionary();
-				
+				/*_repulsionCache = new Dictionary();
+				_attractionCache = new Dictionary();*/
+			
 				for each (currentNode in _idToNode)
 				{
 					netForce.x = 0;
@@ -281,7 +183,6 @@ package weave.visualization.plotters
 					
 					// TODO: handle unconnected nodes
 					
-					
 					//trace(currentNode.id, '\t', netForce.x, netForce.y);
 					
 					// calculate velocity
@@ -308,12 +209,17 @@ package weave.visualization.plotters
 				}
 				
 				//trace(kineticEnergy);
+				if (_iterations >= _nextIncrement)
+				{
+					getCallbackCollection(this).triggerCallbacks();
+					StageUtils.callLater(this, _algorithm, null, true);
+					_nextIncrement += callbackIncrement;
+					break;
+				}
+				
 				if (kineticEnergy < minimumEnergy.value)
 					break;
-				
-				if (++iterations > maxIterations.value)
-					break;
-			} 
+			} // end outerLoop
 			
 			for each (currentNode in _idToNode)
 			{
@@ -330,7 +236,7 @@ package weave.visualization.plotters
 		{
 			if (recordKeys.length == 0)
 				return;
-
+			
 			_currentDataBounds.copyFrom(dataBounds);
 			_currentScreenBounds.copyFrom(screenBounds);
 
@@ -347,11 +253,6 @@ package weave.visualization.plotters
 			var x:Number;
 			var y:Number;
 			
-			//lineStyle.beginLineStyle(recordKey, graphics);				
-			//fillStyle.beginFillStyle(recordKey, graphics);
-			//graphics.beginFill(0xFF0000, 1);
-			//graphics.lineStyle(1, 0x000000, .5);
-									
 			// loop through each node, drawing it
 			for each (var key:IQualifiedKey in recordKeys)
 			{
@@ -421,16 +322,20 @@ package weave.visualization.plotters
 		 */
 		override public function getDataBoundsFromRecordKey(recordKey:IQualifiedKey):Array
 		{
-			var bounds:IBounds2D = getReusableBounds();
+			//var bounds:IBounds2D = getReusableBounds();
 			var id:int = nodesColumn.getValueFromKey(recordKey, int) as int;
 			var gnw:GraphNode = _idToNode[id];
-			var keyPoint:Point;
+			if (gnw)
+				return [ gnw.bounds ];
+			
+			return [ ];
+			/*ar keyPoint:Point;
 			if (gnw)
 			{
 				keyPoint = gnw.position;
 				bounds.includePoint( keyPoint );
-			}
-			return [ bounds ];
+			}*/
+			//return [ bounds ];
 		}
 
 		/**
@@ -510,9 +415,16 @@ package weave.visualization.plotters
 		/**
 		 * Set all of the positions to random values and zero the velocities.
 		 */
-		private function initializeWrappers():void
+		private function resetAllNodes():void
 		{
 			var i:int = 0;
+			var length:int = 0;
+			
+			for each (var obj:* in _idToNode) { ++length; }
+			
+			var gridSpacing:Number = Math.sqrt(1 / length);
+			var currX:Number = gridSpacing;
+			var currY:Number = gridSpacing;
 			for each (var node:GraphNode in _idToNode)
 			{
 				if (node == null)
@@ -520,11 +432,46 @@ package weave.visualization.plotters
 					trace('here');
 					continue;
 				}
-				node.position.x = Math.random();
-				node.position.y = Math.random();
+				node.position.x = currX;
+				node.position.y = currY;
+				currX += gridSpacing;
+				if (currX >= 1)
+				{
+					currX = gridSpacing;
+					currY += gridSpacing;
+				}
+				
 				node.velocity.x = 0;
 				node.velocity.y = 0;
 			}
+		}
+		
+		
+		private function handleColumnsChange():void
+		{
+			_idToNode.length = 0;
+			_idToConnectedNodes.length = 0;
+			_edges.length = 0;
+			
+			// set the keys
+			setKeySource(nodesColumn);
+			
+			// if we don't have the required keys, do nothing
+			if (nodesColumn.keys.length == 0 || edgeSourceColumn.keys.length == 0 || edgeTargetColumn.keys.length == 0)
+				return;
+			if (edgeSourceColumn.keys.length != edgeTargetColumn.keys.length)
+				return;
+			
+			// verify source and target column have same keytype
+			var sourceKey:IQualifiedKey = edgeSourceColumn.keys[0];
+			var targetKey:IQualifiedKey = edgeTargetColumn.keys[0];
+			if (sourceKey.keyType != targetKey.keyType)
+				return;
+			
+			// setup the lookups and objects
+			setupData();
+
+			recomputePositions();
 		}
 		
 		/**
@@ -537,6 +484,95 @@ package weave.visualization.plotters
 			_currentDataBounds.projectPointTo(screenPoint, _currentScreenBounds);
 		}
 
+
+		private function cachedLookup(dictionary:Dictionary, a:GraphNode, b:GraphNode):Point
+		{
+			if (dictionary[a] == undefined)
+			{
+				dictionary[a] = new Dictionary();
+				return null;
+			}
+			
+			var returnValue:Point = dictionary[a][b];
+			if (returnValue != null)
+				return returnValue;
+			
+			if (dictionary[b] == undefined)
+			{
+				dictionary[b] = new Dictionary();
+				return null;
+			}
+			
+			returnValue = dictionary[b][a];
+			if (returnValue == null)
+				return null;
+			returnValue = returnValue.clone();
+			returnValue.x = 0 - returnValue.x;
+			returnValue.y = 0 - returnValue.y;
+			return returnValue;
+		}
+		private function cachedSet(dictionary:Dictionary, a:GraphNode, b:GraphNode, leftPoint:Point):void
+		{
+			if (dictionary[a] == undefined)
+				dictionary[a] = new Dictionary();
+			if (dictionary[b] == undefined)
+				dictionary[b] = new Dictionary();
+			
+			var rightPoint:Point = new Point();
+			rightPoint.x = 0 - leftPoint.x;
+			rightPoint.y = 0 - leftPoint.y;
+			dictionary[a][b] = leftPoint;
+			dictionary[b][a] = rightPoint;
+		}
+		
+		private function hookeAttraction(a:GraphNode, b:GraphNode, output:Point = null):Point
+		{
+			//var cachedPoint:Point = cachedLookup(_attractionCache, a, b);
+			//if (cachedPoint)
+			//	return cachedPoint;
+
+			if (!output) 
+				output = new Point();
+			
+			var dx:Number = b.position.x - a.position.x;
+			var dy:Number = b.position.y - a.position.y;
+			var dx2:Number = dx * dx;
+			var dy2:Number = dy * dy;			
+			var distance:Number = Math.sqrt(dx2 + dy2);
+			var forceMagnitude:Number = attractionConstant.value * (distance - nodeSeparation.value); 
+			
+			output.x = forceMagnitude * dx / distance;
+			output.y = forceMagnitude * dy / distance;
+
+			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
+			//cachedSet(_attractionCache, a, b, output);
+			return output; 
+		}
+		private function coulumbRepulsion(a:GraphNode, b:GraphNode, output:Point = null):Point
+		{
+			//var cachedPoint:Point = cachedLookup(_repulsionCache, a, b);
+			//if (cachedPoint)
+			//	return cachedPoint;
+			
+			if (!output) 
+				output = new Point();
+			
+			var dx:Number = a.position.x - b.position.x;
+			var dy:Number = a.position.y - b.position.y;
+			var dx2:Number = dx * dx;
+			var dy2:Number = dy * dy;			
+			var resultantVectorMagnitude:Number = dx2 + dy2;
+			var distance:Number = Math.sqrt(resultantVectorMagnitude);
+			var forceMagnitude:Number = repulsionConstant.value / resultantVectorMagnitude; 
+			
+			output.x = forceMagnitude * dx / distance;
+			output.y = forceMagnitude * dy / distance;
+
+			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
+			//cachedSet(_repulsionCache, a, b, output);
+			return output;
+		}
+		
 		// reusable objects
 		private const netForce:Point = new Point(); // the force vector
 		private const tempPoint:Point = new Point(); // temp point used for computing force 

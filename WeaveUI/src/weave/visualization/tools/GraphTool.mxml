@@ -193,7 +193,7 @@
 			</mx:HBox>
 			<mx:HBox>
 				<mx:Label text="Algorithm"/>
-				<mx:ComboBox id="algorithmChoice" dataProvider="{[ 'Force Directed', 'FADE' ]}" 
+				<mx:ComboBox id="algorithmChoice" dataProvider="{[ 'Force Directed', 'FADE', 'Incremental' ]}" 
 							 initialize="linkBindableProperty(_plotter.currentAlgorithm, algorithmChoice, 'selectedItem')"/>
 			</mx:HBox>
 			<mx:Button id="recomputePositions" label="Recalculate Node Positions" click="_plotter.recomputePositions()"/>

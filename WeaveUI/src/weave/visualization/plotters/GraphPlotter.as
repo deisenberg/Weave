@@ -21,6 +21,7 @@ package weave.visualization.plotters
 {
 	import flash.display.BitmapData;
 	import flash.display.Graphics;
+	import flash.display.LineScaleMode;
 	import flash.display.Shape;
 	import flash.display.TriangleCulling;
 	import flash.geom.Point;
@@ -37,6 +38,7 @@ package weave.visualization.plotters
 	import weave.api.getCallbackCollection;
 	import weave.api.primitives.IBounds2D;
 	import weave.core.ErrorManager;
+	import weave.core.LinkableBoolean;
 	import weave.core.LinkableHashMap;
 	import weave.core.LinkableNumber;
 	import weave.core.LinkableString;
@@ -58,7 +60,9 @@ package weave.visualization.plotters
 	import weave.visualization.plotters.styles.SolidLineStyle;
 	
 	/**
-	 * GraphPlotter
+	 * This is a plotter for a node edge chart, commonly referred to as a Graph.
+	 * This plotter has different layout algorithms, each with the ability to stop,
+	 * continue, and restart.
 	 * 
 	 * @author kmonico
 	 */	
@@ -72,6 +76,19 @@ package weave.visualization.plotters
 			fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
 			
 			registerNonSpatialProperties(Weave.properties.axisFontUnderline,Weave.properties.axisFontSize,Weave.properties.axisFontColor);
+			
+			init();
+		}
+	
+		/**
+		 * Initialize the algorithms array.
+		 */
+		public function init():void
+		{
+			algorithms[FORCE_DIRECTED] = forceDirected;
+			algorithms[FADE] = fade;
+			algorithms[INCREMENTAL] = incremental;
+			algorithms[RADIAL] = radial;
 		}
 	
 		/**
@@ -92,70 +109,194 @@ package weave.visualization.plotters
 			}
 		}
 		
-		private var _edges:Object = [];
-		private var _idToNode:Object = [];
-		private var _idToConnectedNodes:Object = [];
+		/**
+		 * Continue the algorithm.
+		 */
+		public function continueComputation():void
+		{
+			try
+			{
+				_algorithm();
+			}
+			catch (e:Error)
+			{
+				ErrorManager.reportError(e);
+			}
+		}
+				
+		private function changeAlgorithm():void
+		{
+			var newAlgorithm:Function = algorithms[currentAlgorithm.value];
+			if (newAlgorithm == null)
+				return;
+			
+			_algorithm = newAlgorithm;
+		}
 		
+		// the graph's specification
+		private var _edges:Object = []; // list of edges
+		private var _idToNode:Object = [];  // int -> GraphNode
+		private var _idToConnectedNodes:Object = []; // int -> Array (of GraphNode objects)
+		
+		// styles
 		public const lineStyle:DynamicLineStyle = newNonSpatialProperty(DynamicLineStyle);
-		[Bindable] public var algorithms:Array = [ 'Force Directed', 'FADE', 'Incremental' ];
-		private var _algorithm:Function = null;
-		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle)
+		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle);
+
+		// the columns
+		public const colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
+		public const nodesColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
+		public const edgeSourceColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
+		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		
-		public const colorColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn());
-		public const nodesColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const edgeSourceColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const edgeTargetColumn:DynamicColumn = registerNonSpatialProperty(new DynamicColumn(), handleColumnsChange);
-		public const positionBounds:LinkableBounds2D = registerNonSpatialProperty(new LinkableBounds2D());
-		public const currentAlgorithm:LinkableString = registerNonSpatialProperty(new LinkableString('Force Directed'), changeAlgorithm);
-		public const radius:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(2)); // radius of the circles
+		// the algorithms
+		[Bindable] public var algorithms:Array = [ FORCE_DIRECTED, FADE, INCREMENTAL, RADIAL]; // choices
+		public const currentAlgorithm:LinkableString = registerNonSpatialProperty(new LinkableString('Force Directed'), changeAlgorithm); // the algorithm
+		private var _algorithm:Function = null; // current algorithm function
+		private static const FORCE_DIRECTED:String = "Force Directed";
+		private static const FADE:String = "FADE";
+		private static const INCREMENTAL:String = "Incremental";
+		private static const RADIAL:String = "RADIAL";
+
+		public const positionBounds:LinkableBounds2D = registerNonSpatialProperty(new LinkableBounds2D()); 
+		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
 		public const minimumEnergy:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
 		public const attractionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
 		public const repulsionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(1)); // coulumb's law constant
 		public const dampingConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.75)); // the amount of damping on the forces
 		public const maxIterations:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(1000), handleIterations); // max iterations
-		//private const callbackIncrement:LinkableNumber = registerSpatialProperty(new LinkableNumber(10000));
+		public const drawIncrement:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(200)); // the number of iterations between drawPlot calls	
 		public const nodeSeparation:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(15)); // the minimum separation (this is used for the equilibrium point
-
-		private function handleIterations():void { }
-		private var _repulsionCache:Dictionary;
-		private var _attractionCache:Dictionary;
+		public const shouldStop:LinkableBoolean = registerNonSpatialProperty(new LinkableBoolean(false)); // should the algorithm halt on the next iteration? 
+		public const algorithmRunning:LinkableBoolean = registerNonSpatialProperty(new LinkableBoolean(false)); // is an algorithm running?
 		
-		private function changeAlgorithm():void
-		{
-			if (currentAlgorithm.value == 'Force Directed')
-				_algorithm = forceDirected;
-			else if (currentAlgorithm.value == 'FADE')
-				_algorithm = fade;
-			else if (currentAlgorithm.value == 'Incremental')
-				_algorithm = incremental;
-		}
-		private function fade():void { }
+		private function handleIterations():void { }
 
-		private function incremental():void
+		private function handleNodeSort(a:GraphNode, b:GraphNode):int
 		{
+			// we want higher degrees to come first in the array
 			
+			var aList:Array = _idToConnectedNodes[a.id];
+			var bList:Array = _idToConnectedNodes[a.id];
+			
+			if (aList == null && bList == null)
+				return 0;
+			if (aList == null)
+				return 1;
+			if (bList == null)
+				return -1;
+			
+			var aLength:int = aList.length;
+			var bLength:int = bList.length;
+			if (aLength > bLength)
+				return -1;
+			else if (bLength > aLength)
+				return 1;
+			
+			return 0;
 		}
-
-		private var _iterations:int = 0;
-		private var _nextIncrement:int = 0;
-		private function forceDirected():IBounds2D
+		
+		private var _radii:Object;
+		private var _radialCenter:Point;
+		private function radial():IBounds2D
 		{
-			outputBounds.reset();
+			algorithmRunning.value = true;
 			var currentNode:GraphNode;
+
+			var nodes:Array = (_idToNode as Array).concat();
+			nodes.sort(handleNodeSort);
+			var idToVisitedNodes:Array = [];
+			_radii = [];
+			// perform a breadth first search to set the nodes radius and angle (x and y)
+			var queue:Array = [];
+			var sourceNode:GraphNode = (nodes as Array).shift(); 
+			sourceNode.position.x = 0;
+			sourceNode.position.y = 0;
+			_radialCenter = sourceNode.position;
+			(nodes as Array).unshift(sourceNode);
+			queue.push(sourceNode);
+			for (var iRadius:int = radius.value + 1; queue.length > 0; iRadius += radius.value + 1)
+			{
+				_radii.push(iRadius);
+				currentNode = queue.shift();
+				var edges:Array = _idToConnectedNodes[currentNode.id];
+				var edgesLength:Number = edges ? edges.length : 0;
+				if (edgesLength == 0)
+					continue;
+				
+				var angleSpacing:Number = 2 * Math.PI / edgesLength;
+				var angle:Number = 0;
+				for each (var target:GraphNode in edges)
+				{
+					if (idToVisitedNodes[target.id] == null)
+					{
+						queue.push(target);
+						idToVisitedNodes[target.id] = true;
+						target.position.x = iRadius;
+						target.position.y = angle;
+					}
+					angle += angleSpacing;
+				}
+			}
 			
+			// update the new outputbounds
+			outputBounds.reset();
+			for each (currentNode in nodes)
+			{
+				var pos:Point = currentNode.position;
+				var r:Number = pos.x;
+				angle = pos.y;
+				pos.x = r * Math.cos(angle);
+				pos.y = r * Math.sin(angle);
+				outputBounds.includePoint(currentNode.position);				
+			}
+			
+			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
+			positionBounds.copyFrom(outputBounds);
+
+			// rebuild spatial index
+			_spatialCallbacks.triggerCallbacks();
+			
+			// trigger drawing callbacks
+			getCallbackCollection(this).triggerCallbacks();
+			
+			algorithmRunning.value = false;
+			return outputBounds;
+		}
+		
+		// FINISH THIS
+		private function fade():IBounds2D
+		{
+			// if we should stop iterating
+			if (shouldStop.value == true)
+			{
+				shouldStop.value = false;
+				algorithmRunning.value = false;
+				_spatialCallbacks.triggerCallbacks();
+				return outputBounds;
+			}
+
+			outputBounds.reset();
+			algorithmRunning.value = true;
+			var currentNode:GraphNode;
+			var reachedEquilibrium:Boolean = false;
 			var kineticEnergy:Number = 0;
 			var damping:Number = 0.25;
-			var timeStep:Number = .5;
 			
 			var tempDistance:Number;
-			var callbackIncrement:int = 50;
-			_nextIncrement += callbackIncrement;
+			_nextIncrement += drawIncrement.value;
 			var iterationsDelayed:Boolean = false;
 			for (; _iterations < maxIterations.value; ++_iterations)
 			{
+				// if this function has run for more than 100ms, call later to finish
+				if (StageUtils.shouldCallLater)
+				{
+					StageUtils.callLater(this, _algorithm, null, true);
+					//trace('callLater: ', _iterations);
+					return outputBounds;
+				}
+				
 				/*_repulsionCache = new Dictionary();
 				_attractionCache = new Dictionary();*/
-			
 				for each (currentNode in _idToNode)
 				{
 					netForce.x = 0;
@@ -169,8 +310,10 @@ package weave.visualization.plotters
 						netForce.x += tempAttraction.x;
 						netForce.y += tempAttraction.y;
 					}
+					if (connectedNodes == null || connectedNodes.length == 0)
+						continue;
 					
-					// calculate repulsion for every node except
+					// calculate repulsion with every node except itself
 					for each (var otherNode:GraphNode in _idToNode)
 					{
 						if (currentNode == otherNode) 
@@ -181,9 +324,9 @@ package weave.visualization.plotters
 						netForce.y += tempRepulsion.y;
 					}
 					
-					// TODO: handle unconnected nodes
+					// TODO: handle unconnected nodes (don't count their forces, but push them away)
 					
-					//trace(currentNode.id, '\t', netForce.x, netForce.y);
+					// trace(currentNode.id, '\t', netForce.x, netForce.y);
 					
 					// calculate velocity
 					currentNode.velocity.x = (currentNode.velocity.x + netForce.x) * damping;
@@ -202,25 +345,30 @@ package weave.visualization.plotters
 					var nextPos:Point = gnw.nextPosition;
 					var dx:Number = pos.x - nextPos.x;
 					var dy:Number = pos.y - nextPos.y;
-					kineticEnergy += Math.sqrt(dx * dx + dy * dy); // KE = .5 M V^2, so ignore constants and just go for distance which is proportional to V
+					kineticEnergy += Math.sqrt(dx * dx + dy * dy); 
 
 					gnw.position.x = nextPos.x;
 					gnw.position.y = nextPos.y;
 				}
 				
 				//trace(kineticEnergy);
+
+				// if we've gone over the number of drawing iterations
 				if (_iterations >= _nextIncrement)
 				{
-					getCallbackCollection(this).triggerCallbacks();
-					StageUtils.callLater(this, _algorithm, null, true);
-					_nextIncrement += callbackIncrement;
+					_nextIncrement += drawIncrement.value;
 					break;
 				}
 				
+				// if we found the minimum or equilibrium
 				if (kineticEnergy < minimumEnergy.value)
+				{
+					reachedEquilibrium = true;
 					break;
-			} // end outerLoop
+				}
+			} 
 			
+			// update the new outputbounds
 			for each (currentNode in _idToNode)
 			{
 				outputBounds.includePoint(currentNode.position);				
@@ -228,10 +376,24 @@ package weave.visualization.plotters
 			
 			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
 			positionBounds.copyFrom(outputBounds);
+
+			// if we reached equilibrium, rebuild the spatial index
+			if (reachedEquilibrium == true || _iterations >= maxIterations.value)
+				_spatialCallbacks.triggerCallbacks();
+			else // or call later to finish
+				StageUtils.callLater(this, _algorithm, null, true);
+			
+			// trigger drawing callbacks
+			getCallbackCollection(this).triggerCallbacks();
+			
+			algorithmRunning.value = false;
 			return outputBounds;
 		}
+		private function incremental():void { }
+
+		private var _iterations:int = 0;
+		private var _nextIncrement:int = 0;
 		
-		//private var tempShape:Shape = new Shape();
 		override public function drawPlot(recordKeys:Array, dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
 		{
 			if (recordKeys.length == 0)
@@ -257,6 +419,9 @@ package weave.visualization.plotters
 			for each (var key:IQualifiedKey in recordKeys)
 			{
 				var id:int = nodesColumn.getValueFromKey(key, int);
+				var connections:Array = _idToConnectedNodes[id];
+				if (connections == null || connections.length == 0)
+					continue;
 				var node:GraphNode = _idToNode[id];
 				x = node.position.x;
 				y = node.position.y;
@@ -268,7 +433,6 @@ package weave.visualization.plotters
 				graphics.drawCircle(screenPoint.x, screenPoint.y, radius.value);
 			}
 
-			//graphics.endFill();
 			destination.draw(tempShape, null, null, null, null, false);
 		}
 		
@@ -277,15 +441,15 @@ package weave.visualization.plotters
 			_currentDataBounds.copyFrom(dataBounds);
 			_currentScreenBounds.copyFrom(screenBounds);
 
+			if (_algorithm == radial)
+			{
+				drawRadialBackground(dataBounds, screenBounds, destination);
+				return;
+			}
+			
 			var graphics:Graphics = tempShape.graphics;
 			graphics.clear();
-			var i:int;
-			var count:int = 0;
-			var x:Number;
-			var y:Number;
 			
-			//lineStyle.beginLineStyle(recordKey, graphics);				
-			//fillStyle.beginFillStyle(recordKey, graphics);
 			graphics.beginFill(0xFF0000, 1);
 			graphics.lineStyle(1, 0x000000, .5);
 						
@@ -306,6 +470,49 @@ package weave.visualization.plotters
 			destination.draw(tempShape, null, null, null, null, false);
 		}
 
+		private function drawRadialBackground(dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
+		{
+			var graphics:Graphics = tempShape.graphics;
+			graphics.clear();
+			
+			graphics.lineStyle(1, 0x000000, 0.1);
+
+			for each (var edge:GraphEdge in _edges)
+			{
+				var source:GraphNode = _idToNode[edge.source.id];
+				var target:GraphNode = _idToNode[edge.target.id];
+				
+				var sourcePoint:Point = source.position;
+				projectPoint(sourcePoint.x, sourcePoint.y);
+				graphics.moveTo(screenPoint.x, screenPoint.y);
+				var targetPoint:Point = target.position;
+				projectPoint(targetPoint.x, targetPoint.y);
+				graphics.lineTo(screenPoint.x, screenPoint .y);
+			}
+			
+			// now draw concentric circles
+			if (_radii != null)
+			{
+				graphics.lineStyle(1, 0x111111, 0.8, false, LineScaleMode.NONE);
+				var xCenterData:Number = _radialCenter.x;
+				var yCenterData:Number = _radialCenter.y;
+				projectPoint(xCenterData, yCenterData);
+				var xCenterScreen:Number = screenPoint.x;
+				var yCenterScreen:Number = screenPoint.y;
+				for each (var radius:Number in _radii)
+				{
+					projectPoint(xCenterData + radius, yCenterData);
+					var x:Number = screenPoint.x;
+					var y:Number = screenPoint.y;
+					var dx:Number = x - xCenterScreen;
+					var dy:Number = y - yCenterScreen;
+					graphics.drawCircle(xCenterScreen, yCenterScreen, Math.sqrt(dx*dx + dy*dy));
+				}
+			}
+			destination.draw(tempShape, null, null, null, null, false);
+		}
+
+				
 		private const coordinate:Point = new Point();//reusable object
 		private const _currentDataBounds:IBounds2D = new Bounds2D(); // reusable temporary object
 		private const _currentScreenBounds:IBounds2D = new Bounds2D(); // reusable temporary object
@@ -322,20 +529,17 @@ package weave.visualization.plotters
 		 */
 		override public function getDataBoundsFromRecordKey(recordKey:IQualifiedKey):Array
 		{
-			//var bounds:IBounds2D = getReusableBounds();
+			var bounds:IBounds2D = getReusableBounds();
 			var id:int = nodesColumn.getValueFromKey(recordKey, int) as int;
 			var gnw:GraphNode = _idToNode[id];
-			if (gnw)
-				return [ gnw.bounds ];
-			
-			return [ ];
-			/*ar keyPoint:Point;
+			var keyPoint:Point;
 			if (gnw)
 			{
 				keyPoint = gnw.position;
 				bounds.includePoint( keyPoint );
-			}*/
-			//return [ bounds ];
+			}
+			
+			return [ bounds ];
 		}
 
 		/**
@@ -422,9 +626,8 @@ package weave.visualization.plotters
 			
 			for each (var obj:* in _idToNode) { ++length; }
 			
-			var gridSpacing:Number = Math.sqrt(1 / length);
-			var currX:Number = gridSpacing;
-			var currY:Number = gridSpacing;
+			var spacing:Number = 2 * Math.PI / (length + 1);
+			var angle:Number = 0;
 			for each (var node:GraphNode in _idToNode)
 			{
 				if (node == null)
@@ -432,20 +635,17 @@ package weave.visualization.plotters
 					trace('here');
 					continue;
 				}
-				node.position.x = currX;
-				node.position.y = currY;
-				currX += gridSpacing;
-				if (currX >= 1)
-				{
-					currX = gridSpacing;
-					currY += gridSpacing;
-				}
+				var x:Number = Math.cos(angle);
+				var y:Number = Math.sin(angle);
+				node.position.x = x; 
+				node.position.y = y;
+				angle += spacing;
+				outputBounds.includePoint(node.position);
 				
 				node.velocity.x = 0;
 				node.velocity.y = 0;
 			}
 		}
-		
 		
 		private function handleColumnsChange():void
 		{
@@ -471,7 +671,8 @@ package weave.visualization.plotters
 			// setup the lookups and objects
 			setupData();
 
-			recomputePositions();
+			resetAllNodes();
+			//recomputePositions();
 		}
 		
 		/**
@@ -571,6 +772,133 @@ package weave.visualization.plotters
 			//trace( a.node.id,', ', b.node.id, ', ', output.x, ', ', output.y);
 			//cachedSet(_repulsionCache, a, b, output);
 			return output;
+		}
+		private var _repulsionCache:Dictionary;
+		private var _attractionCache:Dictionary;
+		private function forceDirected():IBounds2D
+		{
+			// if we should stop iterating
+			if (shouldStop.value == true)
+			{
+				shouldStop.value = false;
+				algorithmRunning.value = false;
+				_spatialCallbacks.triggerCallbacks();
+				return outputBounds;
+			}
+
+			outputBounds.reset();
+			algorithmRunning.value = true;
+			var currentNode:GraphNode;
+			var reachedEquilibrium:Boolean = false;
+			var kineticEnergy:Number = 0;
+			var damping:Number = 0.25;
+			
+			var tempDistance:Number;
+			_nextIncrement += drawIncrement.value;
+			var iterationsDelayed:Boolean = false;
+			for (; _iterations < maxIterations.value; ++_iterations)
+			{
+				// if this function has run for more than 100ms, call later to finish
+				if (StageUtils.shouldCallLater)
+				{
+					StageUtils.callLater(this, _algorithm, null, true);
+					//trace('callLater: ', _iterations);
+					return outputBounds;
+				}
+				
+				/*_repulsionCache = new Dictionary();
+				_attractionCache = new Dictionary();*/
+				for each (currentNode in _idToNode)
+				{
+					netForce.x = 0;
+					netForce.y = 0;
+					
+					// calculate edge attraction in connected nodes
+					var connectedNodes:Array = _idToConnectedNodes[currentNode.id];
+					for each (var connectedNode:GraphNode in connectedNodes)
+					{
+						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
+						netForce.x += tempAttraction.x;
+						netForce.y += tempAttraction.y;
+					}
+					if (connectedNodes == null || connectedNodes.length == 0)
+						continue;
+					
+					// calculate repulsion with every node except itself
+					for each (var otherNode:GraphNode in _idToNode)
+					{
+						if (currentNode == otherNode) 
+							continue;
+						
+						var tempRepulsion:Point = coulumbRepulsion(currentNode, otherNode, tempPoint);
+						netForce.x += tempRepulsion.x;
+						netForce.y += tempRepulsion.y;
+					}
+					
+					// TODO: handle unconnected nodes (don't count their forces, but push them away)
+					
+					// trace(currentNode.id, '\t', netForce.x, netForce.y);
+					
+					// calculate velocity
+					currentNode.velocity.x = (currentNode.velocity.x + netForce.x) * damping;
+					currentNode.velocity.y = (currentNode.velocity.y + netForce.y) * damping;
+					
+					// determine the next position (don't modify the current position because we need it for calculating KE
+					currentNode.nextPosition.x = currentNode.position.x + currentNode.velocity.x;
+					currentNode.nextPosition.y = currentNode.position.y + currentNode.velocity.y;
+				}
+
+				// calculate the KE and update positions
+				kineticEnergy = 0;
+				for each (var gnw:GraphNode in _idToNode)
+				{
+					var pos:Point = gnw.position;
+					var nextPos:Point = gnw.nextPosition;
+					var dx:Number = pos.x - nextPos.x;
+					var dy:Number = pos.y - nextPos.y;
+					kineticEnergy += Math.sqrt(dx * dx + dy * dy); 
+
+					gnw.position.x = nextPos.x;
+					gnw.position.y = nextPos.y;
+				}
+				
+				//trace(kineticEnergy);
+
+				// if we've gone over the number of drawing iterations
+				if (_iterations >= _nextIncrement)
+				{
+					_nextIncrement += drawIncrement.value;
+					break;
+				}
+				
+				// if we found the minimum or equilibrium
+				if (kineticEnergy < minimumEnergy.value)
+				{
+					reachedEquilibrium = true;
+					break;
+				}
+			} 
+			
+			// update the new outputbounds
+			for each (currentNode in _idToNode)
+			{
+				outputBounds.includePoint(currentNode.position);				
+			}
+			
+			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
+			positionBounds.copyFrom(outputBounds);
+
+			// if we reached equilibrium, rebuild the spatial index
+			if (reachedEquilibrium == true || _iterations >= maxIterations.value)
+				_spatialCallbacks.triggerCallbacks();
+			else // or call later to finish
+				StageUtils.callLater(this, _algorithm, null, true);
+			
+			// trigger drawing callbacks
+			getCallbackCollection(this).triggerCallbacks();
+			
+			algorithmRunning.value = false;
+			return outputBounds;
 		}
 		
 		// reusable objects

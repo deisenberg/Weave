@@ -26,6 +26,7 @@
 		 layout="absolute">
 	<mx:Script>
 		<![CDATA[
+			import mx.binding.utils.BindingUtils;
 			import mx.events.FlexEvent;
 			
 			import weave.Weave;
@@ -45,7 +46,7 @@
 			import weave.visualization.plotters.styles.SolidFillStyle;
 
 			
-			public var _plotter:GraphPlotter = null;
+			[Bindable] public var _plotter:GraphPlotter = null;
 			override protected function constructor():void
 			{
 				super.constructor();
@@ -60,19 +61,18 @@
 				getCallbackCollection(_plotter).addImmediateCallback(this, invalidateAxes);
 				invalidateAxes();
 				
-				/* var count:int = getDefaultColumnsOfMostCommonKeyType().length;
-				var columnsToInit:Array = [];
-				for (var i:int = 0; i < count; i++)
-				{
-					columnsToInit.push(_plotter.columns.requestObject(null, DynamicColumn, false));
-				}
-
-				if(columnsToInit.length > 0)
-					(initColumnDefaults as Function).apply(null, columnsToInit); */
+				/* BindingUtils.bindSetter(handleAlgorithmRunning, this, "algorithmRunning");
+				BindingUtils.bindSetter(handleShouldStop, this, "shouldStop");
+				algorithmRunning = false;
+				shouldStop = false; */
 				
 				toolTitle.addImmediateCallback(this, updateTitle);
 				_plotter.nodesColumn.addImmediateCallback(this, updateProbeColumns);
+				_plotter.algorithmRunning.addGroupedCallback(this, handleAlgorithmRunning, false);
 			}
+			/* private function handleAlgorithmRunning():void { _plotter; }
+			private function handleShouldStop():void { _plotter; } */
+			
 			
 			override protected function childrenCreated():void
 			{
@@ -127,6 +127,38 @@
 				//return int(100 - (item * 100)) + "% Transparent";
 				return int((item * 100)) + "% Opaque" + "\n" + int(100 - (item * 100)) + "% Transparent";
 			}
+			
+			//[Bindable] private var isRunning:Boolean = false;
+			[Bindable] private var algorithmRunning:Boolean = false;
+			[Bindable] private var shouldStop:Boolean = false; 
+			private function handleStartComputation():void 
+			{ 
+				algorithmRunning = true;
+				shouldStop = false;
+				_plotter.algorithmRunning.value = true;
+				_plotter.shouldStop.value = false;
+				_plotter.recomputePositions();
+			}
+			private function handleStopComputation():void
+			{
+				shouldStop = true;
+				algorithmRunning = false;
+				_plotter.algorithmRunning.value = false;
+				_plotter.shouldStop.value = true;
+			}
+			private function handleContinueComputation():void
+			{
+				algorithmRunning = true;
+				shouldStop = false;
+				_plotter.algorithmRunning.value = true;
+				_plotter.shouldStop.value = false;
+				_plotter.continueComputation();
+			}
+			private function handleAlgorithmRunning():void
+			{
+				algorithmRunning = _plotter.algorithmRunning.value;
+				shouldStop = !algorithmRunning;					
+			}
 		]]>
 	</mx:Script>
 	
@@ -162,10 +194,9 @@
 				<ui:DynamicColumnComponent visTool="{this}" id="nodeComponent" label="Nodes"/>
 				<ui:DynamicColumnComponent visTool="{this}" id="edgeSourceComponent" label="Edge Sources"/>
 				<ui:DynamicColumnComponent visTool="{this}" id="edgeTargetComponent" label="Edge Targets"/>
-				
-				<!--<ui:ColumnListComponent visTool="{this}" id="edgeColumnList" label="Edges"/>-->
 			</mx:VBox>
-		<mx:VBox id="algorithmPanel" label="Positioning Parameters">
+		
+		<mx:VBox id="algorithmPanel" label="Layout Parameters">
 			<mx:HBox>
 				<mx:Label text="Minimum Distance Change"/>
 				<mx:TextInput id="minimumEnergyTxtInput" initialize="linkBindableProperty(_plotter.minimumEnergy, minimumEnergyTxtInput, 'text')"/>
@@ -192,11 +223,19 @@
 				<mx:TextInput id="maxIterationsTxtInput" initialize="linkBindableProperty(_plotter.maxIterations, maxIterationsTxtInput, 'text')"/>
 			</mx:HBox>
 			<mx:HBox>
+				<mx:Label text="Drawing Iteration Multiples"/>
+				<mx:TextInput id="drawIncrement" initialize="linkBindableProperty(_plotter.drawIncrement, drawIncrement, 'text')"/>
+			</mx:HBox>
+			<mx:HBox>
 				<mx:Label text="Algorithm"/>
-				<mx:ComboBox id="algorithmChoice" dataProvider="{[ 'Force Directed', 'FADE', 'Incremental' ]}" 
+				<mx:ComboBox id="algorithmChoice"  dataProvider="{_plotter.algorithms}"
 							 initialize="linkBindableProperty(_plotter.currentAlgorithm, algorithmChoice, 'selectedItem')"/>
 			</mx:HBox>
-			<mx:Button id="recomputePositions" label="Recalculate Node Positions" click="_plotter.recomputePositions()"/>
+			<mx:VBox>
+				<mx:Button id="recomputePositions" enabled="{!algorithmRunning}" label="Recalculate Node Positions" click="handleStartComputation()"/> 
+				<mx:Button id="stopComputation" enabled="{algorithmRunning}" label="Stop Calculations" click="handleStopComputation()"/> 
+				<mx:Button id="continueComputation" enabled="{!algorithmRunning}" label="Continue Calculations" click="handleContinueComputation()"/>
+			</mx:VBox>
 		</mx:VBox>
 	</ui:ControlPanel>
 </SimpleVisTool>

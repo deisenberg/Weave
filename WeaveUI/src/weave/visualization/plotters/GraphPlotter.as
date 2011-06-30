@@ -72,8 +72,8 @@ package weave.visualization.plotters
 		{
 			// initialize default line & fill styles
 			lineStyle.requestLocalObject(SolidLineStyle, false);
-			var fill:SolidFillStyle = fillStyle.requestLocalObject(SolidFillStyle, false);
-			fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
+			//var fill:SolidFillStyle = fillStyle.requestLocalObject(SolidFillStyle, false);
+			//fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
 			
 			registerNonSpatialProperties(Weave.properties.axisFontUnderline,Weave.properties.axisFontSize,Weave.properties.axisFontColor);
 			
@@ -140,10 +140,12 @@ package weave.visualization.plotters
 		
 		// styles
 		public const lineStyle:DynamicLineStyle = newNonSpatialProperty(DynamicLineStyle);
+		//public const fillStyle:SolidFillStyle = newNonSpatialProperty(SolidFillStyle);
 		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle);
 
 		// the columns
-		public const colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
+		public var colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
+		public var sizeColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
 		public const nodesColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const edgeSourceColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
@@ -199,55 +201,60 @@ package weave.visualization.plotters
 		private var _radialCenter:Point;
 		private function radial():IBounds2D
 		{
+			outputBounds.reset();
+			
 			algorithmRunning.value = true;
 			var currentNode:GraphNode;
 
 			var nodes:Array = (_idToNode as Array).concat();
 			nodes.sort(handleNodeSort);
 			var idToVisitedNodes:Array = [];
-			_radii = [];
-			// perform a breadth first search to set the nodes radius and angle (x and y)
-			var queue:Array = [];
+			var idToLevel:Array = []; // lower level => larger radius
+			var currentLevel:int = 0;			
+
 			var sourceNode:GraphNode = (nodes as Array).shift(); 
 			sourceNode.position.x = 0;
 			sourceNode.position.y = 0;
 			_radialCenter = sourceNode.position;
 			(nodes as Array).unshift(sourceNode);
+			idToLevel[sourceNode.id] = currentLevel;
+
+			var r:Number = 0;
+			var radiusIncrement:Number = radius.value + 1;
+			var queue:Array = [];
 			queue.push(sourceNode);
-			for (var iRadius:int = radius.value + 1; queue.length > 0; iRadius += radius.value + 1)
+			while (queue.length > 0)
 			{
-				_radii.push(iRadius);
+				var target:GraphNode;				
 				currentNode = queue.shift();
-				var edges:Array = _idToConnectedNodes[currentNode.id];
-				var edgesLength:Number = edges ? edges.length : 0;
-				if (edgesLength == 0)
+				var xCurrent:Number = currentNode.position.x;
+				var yCurrent:Number = currentNode.position.y;
+				var connectedNodes:Array = _idToConnectedNodes[currentNode.id];
+				if (connectedNodes == null || connectedNodes.length == 0)
 					continue;
+
+				var connectedNodesLength:Number = 0;
+				for each (target in connectedNodes)
+				{
+					if (idToVisitedNodes[target.id] == null)
+						connectedNodesLength++;
+				}
+				r = connectedNodesLength * radiusIncrement;
 				
-				var angleSpacing:Number = 2 * Math.PI / edgesLength;
+				var angleSpacing:Number = 2 * Math.PI / connectedNodesLength;
 				var angle:Number = 0;
-				for each (var target:GraphNode in edges)
+				for each (target in connectedNodes)
 				{
 					if (idToVisitedNodes[target.id] == null)
 					{
 						queue.push(target);
 						idToVisitedNodes[target.id] = true;
-						target.position.x = iRadius;
-						target.position.y = angle;
+						target.position.x = xCurrent + r * Math.cos(angle);
+						target.position.y = yCurrent + r * Math.sin(angle);
+						outputBounds.includePoint(target.position);				
 					}
 					angle += angleSpacing;
 				}
-			}
-			
-			// update the new outputbounds
-			outputBounds.reset();
-			for each (currentNode in nodes)
-			{
-				var pos:Point = currentNode.position;
-				var r:Number = pos.x;
-				angle = pos.y;
-				pos.x = r * Math.cos(angle);
-				pos.y = r * Math.sin(angle);
-				outputBounds.includePoint(currentNode.position);				
 			}
 			
 			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
@@ -415,7 +422,7 @@ package weave.visualization.plotters
 			var x:Number;
 			var y:Number;
 			
-			// loop through each node, drawing it
+			// loop through each node and draw it
 			for each (var key:IQualifiedKey in recordKeys)
 			{
 				var id:int = nodesColumn.getValueFromKey(key, int);
@@ -441,17 +448,17 @@ package weave.visualization.plotters
 			_currentDataBounds.copyFrom(dataBounds);
 			_currentScreenBounds.copyFrom(screenBounds);
 
-			if (_algorithm == radial)
+			/*if (_algorithm == radial)
 			{
 				drawRadialBackground(dataBounds, screenBounds, destination);
 				return;
-			}
+			}*/
 			
 			var graphics:Graphics = tempShape.graphics;
 			graphics.clear();
 			
 			graphics.beginFill(0xFF0000, 1);
-			graphics.lineStyle(1, 0x000000, .5);
+			graphics.lineStyle(1, 0x000000, .2);
 						
 			for each (var edge:GraphEdge in _edges)
 			{

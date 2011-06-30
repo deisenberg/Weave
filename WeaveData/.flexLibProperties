@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<flexLibProperties includeAllClasses="false" useMultiPlatformConfig="false" version="1">
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="1">
   <includeClasses>
     <classEntry path="org.openscales.proj4as.Datum"/>
     <classEntry path="org.openscales.proj4as.Proj4as"/>
@@ -124,7 +124,6 @@
     <classEntry path="weave.primitives.Bounds2D"/>
     <classEntry path="weave.primitives.ColorRamp"/>
     <classEntry path="weave.primitives.GeneralizedGeometry"/>
-    <classEntry path="weave.primitives.SimpleGeometry"/>
     <classEntry path="weave.primitives.ImageFactory"/>
     <classEntry path="weave.primitives.KDNode"/>
     <classEntry path="weave.primitives.KDTree"/>
@@ -132,12 +131,14 @@
     <classEntry path="weave.primitives.LinkableNumberFormatter"/>
     <classEntry path="weave.primitives.LooseAxisDescription"/>
     <classEntry path="weave.primitives.Range"/>
+    <classEntry path="weave.primitives.SimpleGeometry"/>
     <classEntry path="weave.primitives.VertexChainLink"/>
     <classEntry path="weave.primitives.WeakReference"/>
     <classEntry path="weave.primitives.WeaveMatrix"/>
     <classEntry path="weave.services.AMF3Servlet"/>
     <classEntry path="weave.services.AsyncInvocationQueue"/>
     <classEntry path="weave.services.AsyncServiceQueue"/>
+    <classEntry path="weave.services.CollaborationService"/>
     <classEntry path="weave.services.DelayedAsyncInvocation"/>
     <classEntry path="weave.services.DelayedAsyncResponder"/>
     <classEntry path="weave.services.LocalAsyncService"/>
@@ -186,6 +187,7 @@
     <classEntry path="weave.utils.VectorUtils"/>
     <classEntry path="weave.utils.WordProcessingUtils"/>
     <classEntry path="weave.utils.ZoomUtils"/>
+    <classEntry path="weave.services.CollaborationEvent"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

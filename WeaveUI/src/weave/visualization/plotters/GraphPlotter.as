@@ -72,8 +72,8 @@ package weave.visualization.plotters
 		{
 			// initialize default line & fill styles
 			lineStyle.requestLocalObject(SolidLineStyle, false);
-			//var fill:SolidFillStyle = fillStyle.requestLocalObject(SolidFillStyle, false);
-			//fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
+			var fill:SolidFillStyle = fillStyle.requestLocalObject(SolidFillStyle, false);
+			fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
 			
 			registerNonSpatialProperties(Weave.properties.axisFontUnderline,Weave.properties.axisFontSize,Weave.properties.axisFontColor);
 			
@@ -89,6 +89,8 @@ package weave.visualization.plotters
 			algorithms[FADE] = fade;
 			algorithms[INCREMENTAL] = incremental;
 			algorithms[RADIAL] = radial;
+			
+			resetAllNodes();
 		}
 	
 		/**
@@ -159,7 +161,6 @@ package weave.visualization.plotters
 		private static const INCREMENTAL:String = "Incremental";
 		private static const RADIAL:String = "RADIAL";
 
-		public const positionBounds:LinkableBounds2D = registerNonSpatialProperty(new LinkableBounds2D()); 
 		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
 		public const minimumEnergy:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
 		public const attractionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
@@ -252,7 +253,7 @@ package weave.visualization.plotters
 					r = Math.abs(r * Math.sin(angleSpacing / 2)); 
 					previousLevel = level;
 				}
-				
+
 				// for each of the unvisited, connected nodes
 				for each (var target:GraphNode in _idToConnectedNodes[parentNode.id])
 				{
@@ -273,7 +274,6 @@ package weave.visualization.plotters
 			
 			// resize the bounds so it looks nice
 			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
-			positionBounds.copyFrom(outputBounds);
 
 			// rebuild spatial index
 			_spatialCallbacks.triggerCallbacks();
@@ -615,6 +615,9 @@ package weave.visualization.plotters
 			_currentDataBounds.projectPointTo(screenPoint, _currentScreenBounds);
 		}
 
+		/**
+		 * Calculate the hooke attraction on node a from spring b.
+		 */
 		private function hookeAttraction(a:GraphNode, b:GraphNode, output:Point = null):Point
 		{
 			if (!output) 
@@ -632,6 +635,9 @@ package weave.visualization.plotters
 
 			return output; 
 		}
+		/**
+		 * Calculate the repulsion force on node a due to node b.
+		 */
 		private function coulumbRepulsion(a:GraphNode, b:GraphNode, output:Point = null):Point
 		{
 			if (!output) 
@@ -652,8 +658,9 @@ package weave.visualization.plotters
 
 			return output;
 		}
-		private var _repulsionCache:Dictionary;
-		private var _attractionCache:Dictionary;
+		/**
+		 * Update the positions of the nodes using a force directed layout.
+		 */
 		private function forceDirected():IBounds2D
 		{
 			// if we should stop iterating
@@ -678,7 +685,7 @@ package weave.visualization.plotters
 				// if this function has run for more than 100ms, call later to finish
 				if (StageUtils.shouldCallLater)
 				{
-					StageUtils.callLater(this, _algorithm, null, true);
+					StageUtils.callLater(this, forceDirected, null, true);
 					return outputBounds;
 				}
 				
@@ -694,6 +701,8 @@ package weave.visualization.plotters
 					for each (var connectedNode:GraphNode in connectedNodes)
 					{
 						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
+						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
+							trace('here');
 						netForce.x += tempAttraction.x;
 						netForce.y += tempAttraction.y;
 					}
@@ -730,16 +739,14 @@ package weave.visualization.plotters
 
 				// calculate the KE and update positions
 				kineticEnergy = 0;
-				for each (var gnw:GraphNode in _idToNode)
+				for each (currentNode in _idToNode)
 				{
-					var pos:Point = gnw.position;
-					var nextPos:Point = gnw.nextPosition;
-					var dx:Number = pos.x - nextPos.x;
-					var dy:Number = pos.y - nextPos.y;
-					kineticEnergy += Math.sqrt(dx * dx + dy * dy); 
+					var p1:Point = currentNode.position;
+					var p2:Point = currentNode.nextPosition;
+					kineticEnergy += ComputationalGeometryUtils.getDistanceFromPoint(p1.x, p1.y, p2.x, p2.y);
 
-					gnw.position.x = nextPos.x;
-					gnw.position.y = nextPos.y;
+					p1.x = p2.x;
+					p1.y = p2.y;
 				}
 				
 				//trace(kineticEnergy);
@@ -760,25 +767,32 @@ package weave.visualization.plotters
 			} 
 			
 			// update the new outputbounds
-			for each (currentNode in _idToNode)
-			{
-				outputBounds.includePoint(currentNode.position);				
-			}
+			setOutputBounds();
 			
-			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
-			positionBounds.copyFrom(outputBounds);
-
 			// if we reached equilibrium, rebuild the spatial index
 			if (reachedEquilibrium == true || _iterations >= maxIterations.value)
 				_spatialCallbacks.triggerCallbacks();
 			else // or call later to finish
-				StageUtils.callLater(this, _algorithm, null, true);
+				StageUtils.callLater(this, forceDirected, null, true);
 			
 			// trigger drawing callbacks
 			getCallbackCollection(this).triggerCallbacks();
 			
 			algorithmRunning.value = false;
 			return outputBounds;
+		}
+		
+		/**
+		 * Sets the output bounds.
+		 */
+		private function setOutputBounds():void
+		{
+			outputBounds.reset();
+			for each (var node:GraphNode in _idToNode)
+			{
+				outputBounds.includePoint(node.position);				
+			}
+			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
 		}
 		
 		// reusable objects

@@ -139,10 +139,10 @@ package weave.visualization.plotters
 		private var _edges:Object = []; // list of edges
 		private var _idToNode:Object = [];  // int -> GraphNode
 		private var _idToConnectedNodes:Object = []; // int -> Array (of GraphNode objects)
+		private const _allowedBounds:IBounds2D = new Bounds2D(-100, -100, 100, 100);
 		
 		// styles
 		public const lineStyle:DynamicLineStyle = newNonSpatialProperty(DynamicLineStyle);
-		//public const fillStyle:SolidFillStyle = newNonSpatialProperty(SolidFillStyle);
 		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle);
 
 		// the columns
@@ -201,7 +201,7 @@ package weave.visualization.plotters
 		
 		private var _idToRadius:Object;
 		public const maxLevels:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(2)); 
-		private function radial():IBounds2D
+		private function radial():void
 		{
 			outputBounds.reset();
 			algorithmRunning.value = true;
@@ -274,7 +274,7 @@ package weave.visualization.plotters
 			
 			// resize the bounds so it looks nice
 			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
-
+			
 			// rebuild spatial index
 			_spatialCallbacks.triggerCallbacks();
 			
@@ -282,7 +282,6 @@ package weave.visualization.plotters
 			getCallbackCollection(this).triggerCallbacks();
 			
 			algorithmRunning.value = false;
-			return outputBounds;
 		}
 		private function getNumUnvisitedConnectedNodes(sourceNode:GraphNode, visitedArray:Array):int
 		{
@@ -478,7 +477,8 @@ package weave.visualization.plotters
 		 */
 		override public function getBackgroundDataBounds():IBounds2D
 		{
-			return outputBounds.cloneBounds();
+			return _allowedBounds.cloneBounds();
+			//return outputBounds.cloneBounds();
 		}
 
 		/**
@@ -630,9 +630,14 @@ package weave.visualization.plotters
 			var distance:Number = Math.sqrt(dx2 + dy2);
 			var forceMagnitude:Number = attractionConstant.value * (distance - nodeSeparation.value); 
 			
-			output.x = forceMagnitude * dx / distance;
-			output.y = forceMagnitude * dy / distance;
-
+			var forceX:Number = forceMagnitude * dx / distance;
+			var forceY:Number = forceMagnitude * dy / distance;
+			if (isNaN(forceX))
+				forceX = 0;
+			if (isNaN(forceY))
+				forceY = 0;
+			output.x = forceX;
+			output.y = forceY;
 			return output; 
 		}
 		/**
@@ -653,15 +658,20 @@ package weave.visualization.plotters
 			var distance:Number = Math.sqrt(resultantVectorMagnitude);
   			var forceMagnitude:Number = repulsionConstant.value / resultantVectorMagnitude; 
 			
-			output.x = forceMagnitude * dx / distance;
-			output.y = forceMagnitude * dy / distance;
-
+			var forceX:Number = forceMagnitude * dx / distance;
+			var forceY:Number = forceMagnitude * dy / distance;
+			if (isNaN(forceX))
+				forceX = 0;
+			if (isNaN(forceY))
+				forceY = 0;
+			output.x = forceX;
+			output.y = forceY;
 			return output;
 		}
 		/**
 		 * Update the positions of the nodes using a force directed layout.
 		 */
-		private function forceDirected():IBounds2D
+		private function forceDirected():void
 		{
 			// if we should stop iterating
 			if (shouldStop.value == true)
@@ -669,7 +679,7 @@ package weave.visualization.plotters
 				shouldStop.value = false;
 				algorithmRunning.value = false;
 				_spatialCallbacks.triggerCallbacks();
-				return outputBounds;
+				return;
 			}
 
 			outputBounds.reset();
@@ -685,14 +695,13 @@ package weave.visualization.plotters
 				// if this function has run for more than 100ms, call later to finish
 				if (StageUtils.shouldCallLater)
 				{
+					getCallbackCollection(this).triggerCallbacks();
 					StageUtils.callLater(this, forceDirected, null, true);
-					return outputBounds;
+					return;
 				}
 				
 				for each (currentNode in _idToNode)
 				{
-					if (currentNode.id == 5)
-						trace('id = 5');
 					netForce.x = 0;
 					netForce.y = 0;
 					
@@ -702,7 +711,7 @@ package weave.visualization.plotters
 					{
 						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
 						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
-							trace('here');
+							trace('NaN Hooke');
 						netForce.x += tempAttraction.x;
 						netForce.y += tempAttraction.y;
 					}
@@ -717,7 +726,7 @@ package weave.visualization.plotters
 						
 						var tempRepulsion:Point = coulumbRepulsion(currentNode, otherNode, tempPoint);
 						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
-							trace('here');
+							trace('NaN Repulsion');
 						netForce.x += tempRepulsion.x;
 						netForce.y += tempRepulsion.y;
 					}
@@ -727,7 +736,7 @@ package weave.visualization.plotters
 					// trace(currentNode.id, '\t', netForce.x, netForce.y);
 					
 					if (isNaN(netForce.x) || isNaN(netForce.y))
-						trace('nan');
+						trace('NaN netForce');
 					// calculate velocity
 					currentNode.velocity.x = (currentNode.velocity.x + netForce.x) * dampingConstant.value;
 					currentNode.velocity.y = (currentNode.velocity.y + netForce.y) * dampingConstant.value;
@@ -735,6 +744,8 @@ package weave.visualization.plotters
 					// determine the next position (don't modify the current position because we need it for calculating KE
 					currentNode.nextPosition.x = currentNode.position.x + currentNode.velocity.x;
 					currentNode.nextPosition.y = currentNode.position.y + currentNode.velocity.y;
+					
+					_allowedBounds.constrainPoint(currentNode.nextPosition);
 				}
 
 				// calculate the KE and update positions
@@ -779,7 +790,6 @@ package weave.visualization.plotters
 			getCallbackCollection(this).triggerCallbacks();
 			
 			algorithmRunning.value = false;
-			return outputBounds;
 		}
 		
 		/**

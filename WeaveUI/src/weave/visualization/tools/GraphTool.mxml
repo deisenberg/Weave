@@ -61,18 +61,10 @@
 				getCallbackCollection(_plotter).addImmediateCallback(this, invalidateAxes);
 				invalidateAxes();
 				
-				/* BindingUtils.bindSetter(handleAlgorithmRunning, this, "algorithmRunning");
-				BindingUtils.bindSetter(handleShouldStop, this, "shouldStop");
-				algorithmRunning = false;
-				shouldStop = false; */
-				
 				toolTitle.addImmediateCallback(this, updateTitle);
 				_plotter.nodesColumn.addImmediateCallback(this, updateProbeColumns);
 				_plotter.algorithmRunning.addGroupedCallback(this, handleAlgorithmRunning, false);
 			}
-			/* private function handleAlgorithmRunning():void { _plotter; }
-			private function handleShouldStop():void { _plotter; } */
-			
 			
 			override protected function childrenCreated():void
 			{
@@ -209,11 +201,6 @@
 				<mx:Label text="Repulsion Constant"/>
 				<mx:TextInput id="repulsionTxtInput" initialize="linkBindableProperty(_plotter.repulsionConstant, repulsionTxtInput, 'text')"/>
 			</mx:HBox>
-			<mx:HBox>
-				<mx:Label text="Node Separation"/>
-				<mx:TextInput id="separationTxtInput" initialize="linkBindableProperty(_plotter.nodeSeparation, separationTxtInput, 'text')"/>
-			</mx:HBox>
-
 			<mx:HBox>
 				<mx:Label text="Damping Constant"/>
 				<mx:TextInput id="dampingTxtInput" initialize="linkBindableProperty(_plotter.dampingConstant, dampingTxtInput, 'text')"/>

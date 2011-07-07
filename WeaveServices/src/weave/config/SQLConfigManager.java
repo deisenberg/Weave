@@ -20,7 +20,6 @@
 package weave.config;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.sql.CallableStatement;
@@ -153,36 +152,31 @@ public final class SQLConfigManager
 				try
 				{
 					config = new DatabaseConfig(config);
-					System.out.println("Using configuration stored in database instead of "+configFileName);
+					//System.out.println("Using configuration stored in database instead of "+configFileName);
 				}
 				catch (Exception e)
 				{
-					e.printStackTrace();
-					System.out.println("Using configuration stored in "+configFileName);
+					//e.printStackTrace();
+					//System.out.println("Using configuration stored in "+configFileName);
 				}
 				_lastModifiedTime = new File(configFileName).lastModified();
 			}
 			catch (SAXParseException e)
 			{
-				e.printStackTrace();
+				//e.printStackTrace();
 				String msg = String.format(
 						"%s parse error: Line %d, column %d: %s",
-						configFileName,
+						new File(configFileName).getName(),
 						e.getLineNumber(),
 						e.getColumnNumber(),
 						e.getMessage()
 					);
 				throw new RemoteException(msg);
 			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-				throw new RemoteException("Server failed to initialize because configuration file was missing", e);
-			}
 			catch (Exception e)
 			{
 				e.printStackTrace();
-				throw new RemoteException("Server failed to initialize because configuration file could not be read.", e);
+				throw new RemoteException("Server configuration error.", e);
 			}
 		}
 		return config;
@@ -248,6 +242,8 @@ public final class SQLConfigManager
 			ISQLConfig config = getConfig();
 			String connectionName = config.getAccessLogConnectionName();
 			ConnectionInfo connInfo = config.getConnectionInfo(connectionName);
+			if (connInfo == null)
+				return;
 
 			// get connection
 			conn = connInfo.getStaticReadOnlyConnection();

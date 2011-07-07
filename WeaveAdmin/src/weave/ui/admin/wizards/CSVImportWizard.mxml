@@ -37,7 +37,7 @@
 			<mx:Button label="Choose File on Server" click="openServerBrowser();" />
 			<mx:Text text = "{fileStatus.text}" id="fileStatus"/>
 		</mx:HBox>
-		<admin:SQLTableSelectorDialog id="tableSelector" enabled="false" showTableCombo="false" creationComplete="tableSelector.tableOverwriteCheck.toolTip = StringDefinition.DEFAULT_CSV_TABLES_OVERWRITE_CHECKBOX_TOOLTIP"/>
+		<admin:SQLTableSelectorDialog id="tableSelector" enabled="false" showTableCombo="false" tableOverwriteCheckVisible="{AdminInterface.instance.currentUserIsSuperuser}" initialize="tableSelector.tableOverwriteCheck.toolTip = StringDefinition.DEFAULT_CSV_TABLES_OVERWRITE_CHECKBOX_TOOLTIP"/>
 		<mx:HBox id="box1" enabled="false">
 			<mx:TextArea text="Name of key column in CSV file" width="{indent}" borderThickness="0" selectable="false" editable="false" wordWrap="true" />
 			<ui:CustomComboBox id="csvKeyColumnCombo" text="" editable="true" toolTip="{StringDefinition.DEFAULT_CSV_KEY_COLUMN_DROPDOWNBOX_TOOLTIP}"/><!-- editable because user may have typed in a file name manually -->
@@ -184,6 +184,7 @@
 			private function handleGetCSVColumnNames(e:ResultEvent, token:Object = null):void
 			{
 				csvKeyColumnCombo.dataProvider = e.result;
+				csvSecondaryKeyColumnCombo.dataProvider = e.result;
 			}
 			
 			
@@ -191,11 +192,11 @@
 			 * Adds the new CSV file to the server configuration, then adds the Dublin Core metadata (if any).
 			 */
 			override public function finish():void
-			{				
+			{
 				var query:DelayedAsyncInvocation = AdminInterface.instance.importCSV(
 						csvFileNameInput.text,
 						csvKeyColumnCombo.text,
-						csvSecondaryKeyColumnCombo.text,
+						secondaryKeyColumnCheckBox.selected ? csvSecondaryKeyColumnCombo.text : null,
 						tableSelector.activeSchema,
 						tableSelector.activeTable,
 						tableSelector.tableOverwriteCheck.selected,
@@ -205,16 +206,16 @@
 						geometrySelector.selectedKeyType,
 						nullFlagInput.text
 					);
-				query.addAsyncResponder(
-						function(event:ResultEvent, token:Object = null):void
-						{
-							selectedChild = dublinCorePage;
-							commitDublinCoreElements();
-						}
-					);
+				query.addAsyncResponder(handleImportCSV);
+				function handleImportCSV(event:ResultEvent, token:Object = null):void
+				{
+					selectedChild = dublinCorePage;
+					commitDublinCoreElements();
+				}
 			}
 			
-			private function commitDublinCoreElements():void{
+			private function commitDublinCoreElements():void
+			{
 				var elements:Object = new Object();
 				if(dcTitleTextInput.text.length != 0)
 					elements["title"] = dcTitleTextInput.text;
@@ -227,15 +228,7 @@
 				//and still represents the correct dataset name at the time this code is run. -Curran
 				var datasetName:String = dataTableNameInput.text;
 				
-				AdminInterface.instance.addDCElements(datasetName,elements,
-					function(event:ResultEvent, token:Object = null):void
-					{
-						//show nothing, as another "success" popup comes at the same time from another piece of code 
-//						Alert.show("CSV file successfully imported!");
-						//close the outer wizard
-						
-					}
-				);
+				AdminInterface.instance.addDCElements(datasetName, elements);
 			}
 			
 			private function enableAllWidgets(enable:Boolean = true):void

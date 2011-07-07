@@ -24,7 +24,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -299,6 +298,7 @@ public class SQLConfigXML implements ISQLConfig
 			tag.setAttribute(ConnectionInfo.USER, info.user);
 		if (info.pass != null)
 			tag.setAttribute(ConnectionInfo.PASS, info.pass);
+		tag.setAttribute(ConnectionInfo.IS_SUPERUSER, Boolean.toString(info.is_superuser));
 
 		// add to document with formatting
 		Node parent = doc.getDocumentElement();
@@ -350,8 +350,11 @@ public class SQLConfigXML implements ISQLConfig
 	}
 
 	// list all geometryCollections
-	synchronized public List<String> getGeometryCollectionNames()
+	synchronized public List<String> getGeometryCollectionNames(String connectionName)
 	{
+		// don't bother filtering the results because this class will only ever
+		// be used for migrating the xml to a database, and in that case we don't
+		// want to filter out any entries
 		validateCache();
 		List<String> names = Arrays.asList(geometryCollectionCache.keySet().toArray(new String[0]));
 		Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
@@ -359,21 +362,24 @@ public class SQLConfigXML implements ISQLConfig
 	}
 
 	// list all dataTables
-	synchronized public List<String> getDataTableNames()
+	synchronized public List<String> getDataTableNames(String connectionName)
 	{
+		// don't bother filtering the results because this class will only ever
+		// be used for migrating the xml to a database, and in that case we don't
+		// want to filter out any entries
 		validateCache();
 		List<String> names = Arrays.asList(dataTableCache.keySet().toArray(new String[0]));
 		Collections.sort(names, String.CASE_INSENSITIVE_ORDER);
 		return names;
 	}
 
-	synchronized public ConnectionInfo getConnectionInfo(String connectionName) throws RemoteException
+	synchronized public ConnectionInfo getConnectionInfo(String connectionName)
 	{
 		validateCache();
 		
 		Map<String, String> map = connectionCache.get(connectionName);
 		if (map == null)
-			throw new RemoteException(String.format("Connection named \"%s\" does not exist.", connectionName));
+			return null;
 
 		// System.out.println("connection "+connectionName+map);
 		ConnectionInfo info = new ConnectionInfo();
@@ -384,6 +390,7 @@ public class SQLConfigXML implements ISQLConfig
 		info.database = getNonNullValue(map, ConnectionInfo.DATABASE);
 		info.user = getNonNullValue(map, ConnectionInfo.USER);
 		info.pass = getNonNullValue(map, ConnectionInfo.PASS);
+		info.is_superuser = Boolean.parseBoolean(getNonNullValue(map, ConnectionInfo.IS_SUPERUSER));
 		return info;
 	}
 
@@ -463,7 +470,7 @@ public class SQLConfigXML implements ISQLConfig
 			if (dataTableName == null)
 				return;
 			// create dataTable tag if it doesn't exist
-			if (ListUtils.findString(dataTableName, getDataTableNames()) < 0)
+			if (ListUtils.findString(dataTableName, getDataTableNames(null)) < 0)
 			{
 				// create dataTable tag with formatting
 				Element tag = doc.createElement(ENTRYTYPE_DATATABLE);

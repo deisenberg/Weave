@@ -50,6 +50,14 @@
                     <zipfileset file="${basedir}/WeaveServices.war"/>
                 </zip>
         </target>
+        
+        <target name="deploy_war">
+        	<zip destfile="weave.zip">
+                    <zipfileset dir="${WEAVE_DESTROOT}" prefix="ROOT"/>
+                    <zipfileset file="${basedir}/WeaveServices.war"/>
+            </zip>
+        </target>
+        
         <target name="install" depends="build">
                 <!-- This target will install the files to WEAVE_DOCROOT. -->
                 <copy todir="${WEAVE_DOCROOT}">
@@ -186,9 +194,9 @@
 			file="AdminConsole.html"
 			swf="AdminConsole"
 			history="false"
-			version-major="9"
+			version-major="10"
 			version-minor="0"
-			version-revision="124"
+			version-revision="0"
 			height="100%"
 			width="100%"
 			title="AdminConsole"
@@ -203,9 +211,9 @@
 			file="weave.html"
 			swf="weave"
 			history="false"
-			version-major="9"
+			version-major="10"
 			version-minor="0"
-			version-revision="124"
+			version-revision="0"
 			height="100%"
 			width="100%"
 			title="weave"

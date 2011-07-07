@@ -73,6 +73,7 @@ package weave.visualization.plotters
 		{
 			// initialize default line & fill styles
 			lineStyle.requestLocalObject(SolidLineStyle, false);
+			(lineStyle.internalObject as SolidLineStyle).scaleMode.defaultValue.value = LineScaleMode.NONE;
 			var fill:SolidFillStyle = fillStyle.requestLocalObject(SolidFillStyle, false);
 			fill.color.internalDynamicColumn.requestGlobalObject(Weave.DEFAULT_COLOR_COLUMN, ColorColumn, false);
 			
@@ -88,7 +89,7 @@ package weave.visualization.plotters
 		{
 			algorithms[FORCE_DIRECTED] = forceDirected;
 			algorithms[FADE] = fade;
-			
+			algorithms[GRIP] = grip;
 			resetAllNodes();
 		}
 	
@@ -113,18 +114,30 @@ package weave.visualization.plotters
 		/**
 		 * Continue the algorithm.
 		 */
-		public function continueComputation():void
+		public function continueComputation(keys:Object = null):void
 		{
 			try
 			{
-				_algorithm();
+				_algorithm(keys);
 			}
 			catch (e:Error)
 			{
 				ErrorManager.reportError(e);
 			}
 		}
-				
+		public function runForceDirect(keys:Array = null):void
+		{
+			try
+			{
+				forceDirected(keys);
+			}
+			catch (e:Error)
+			{
+				ErrorManager.reportError(e);
+			}
+		}
+		
+		
 		private function changeAlgorithm():void
 		{
 			var newAlgorithm:Function = algorithms[currentAlgorithm.value];
@@ -136,9 +149,10 @@ package weave.visualization.plotters
 		
 		// the graph's specification
 		// TODO change these to use QKeys instead
-		private var _edges:Array = []; // list of edges
-		private var _keyToNode:Array = [];  // IQualifiedKey-> GraphNode
-		private var _keyToConnectedNodes:Object = []; // IQualifiedKey-> Array (of GraphNode objects)
+		private var _edges:Array = []; // Array of GraphEdges
+		private var _keyToNode:Dictionary;
+		private var _numNodes:int = 0;
+		//private var _keyToConnectedNodes:Object = []; // IQualifiedKey-> Array (of GraphNode objects)
 		private const _allowedBounds:IBounds2D = new Bounds2D(-100, -100, 100, 100);
 		
 		// styles
@@ -153,12 +167,13 @@ package weave.visualization.plotters
 		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		
 		// the algorithms
-		[Bindable] public var algorithms:Array = [ FORCE_DIRECTED, FADE ]; // choices
+		[Bindable] public var algorithms:Array = [ FORCE_DIRECTED, FADE, GRIP ]; // choices
 		public const currentAlgorithm:LinkableString = registerNonSpatialProperty(new LinkableString(FORCE_DIRECTED), changeAlgorithm); // the algorithm
 		private var _algorithm:Function = null; // current algorithm function
 		private static const FORCE_DIRECTED:String = "Force Directed";
 		private static const FADE:String = "FADE";
-
+		private static const GRIP:String = "Intelligent Placement";
+		
 		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
 		public const minimumEnergy:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
 		public const attractionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
@@ -172,14 +187,13 @@ package weave.visualization.plotters
 		private function handleIterations():void { }
 
 		// FINISH THESE
-		private function fade():IBounds2D
-		{
-			return outputBounds;
-		}
+		private function fade(keys:Array = null):void { }
 
+		private function grip(keys:Array = null):void { }
+		
 		private var _iterations:int = 0;
 		private var _nextIncrement:int = 0;
-		
+		private const edgesShape:Shape = new Shape();
 		override public function drawPlot(recordKeys:Array, dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
 		{
 			if (recordKeys.length == 0)
@@ -188,8 +202,10 @@ package weave.visualization.plotters
 			_currentDataBounds.copyFrom(dataBounds);
 			_currentScreenBounds.copyFrom(screenBounds);
 
-			var graphics:Graphics = tempShape.graphics;
-			graphics.clear();
+			var nodesGraphics:Graphics = tempShape.graphics;
+			var edgesGraphics:Graphics = edgesShape.graphics;
+			nodesGraphics.clear();
+			edgesGraphics.clear();
 			var i:int;
 			var count:int = 0;
 			var x:Number;
@@ -198,55 +214,38 @@ package weave.visualization.plotters
 			// loop through each node and draw it
 			for each (var key:IQualifiedKey in recordKeys)
 			{
-				var connections:Array = _keyToConnectedNodes[key];
+				var node:GraphNode = _keyToNode[key];
+				var connections:Vector.<GraphNode> = node.connections;
 				if (connections == null || connections.length == 0)
 					continue;
-				var node:GraphNode = _keyToNode[key];
 				
+				// set the styles
+				lineStyle.beginLineStyle(key, nodesGraphics);				
+				fillStyle.beginFillStyle(key, nodesGraphics);
+				lineStyle.beginLineStyle(key, edgesGraphics);				
+				fillStyle.beginFillStyle(key, edgesGraphics);
+
+				// first draw the node
 				x = node.position.x;
 				y = node.position.y;
 				projectPoint(x, y);
-									
-				lineStyle.beginLineStyle(key, graphics);				
-				fillStyle.beginFillStyle(key, graphics);
+				var xNode:Number = screenPoint.x;
+				var yNode:Number = screenPoint.y;
+				nodesGraphics.drawCircle(xNode, yNode, radius.value);
 				
-				graphics.drawCircle(screenPoint.x, screenPoint.y, radius.value);
+				for each (var connectedNode:GraphNode in connections)
+				{
+					edgesGraphics.moveTo(xNode, yNode);
+					x = connectedNode.position.x;
+					y = connectedNode.position.y;
+					projectPoint(x, y);
+					edgesGraphics.lineTo(screenPoint.x, screenPoint.y);
+				}
 			}
-
+			destination.draw(edgesShape, null, null, null, null, false);
 			destination.draw(tempShape, null, null, null, null, false);
 		}
-		
-		override public function drawBackground(dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
-		{
-			/*_currentDataBounds.copyFrom(dataBounds);
-			_currentScreenBounds.copyFrom(screenBounds);
-
-			var graphics:Graphics = tempShape.graphics;
-			graphics.clear();
-			
-			graphics.lineStyle(1, 0x000000, .2);
-						
-			for each (var edge:GraphEdge in _edges)
-			{
-				var source:GraphNode = _idToNode[edge.source.id];
-				var target:GraphNode = _idToNode[edge.target.id];
-
-				var sourcePoint:Point = source.position;
-				projectPoint(sourcePoint.x, sourcePoint.y);
-				if (screenBounds.containsPoint(screenPoint) == false)
-					continue;
-				graphics.moveTo(screenPoint.x, screenPoint.y);
-
-				var targetPoint:Point = target.position;
-				projectPoint(targetPoint.x, targetPoint.y);
-				if (screenBounds.containsPoint(screenPoint) == false)
-					continue;
-				graphics.lineTo(screenPoint.x, screenPoint .y);
-			}
-			
-			destination.draw(tempShape, null, null, null, null, false);*/
-		}
-				
+					
 		private const coordinate:Point = new Point();//reusable object
 		private const _currentDataBounds:IBounds2D = new Bounds2D(); // reusable temporary object
 		private const _currentScreenBounds:IBounds2D = new Bounds2D(); // reusable temporary object
@@ -289,33 +288,39 @@ package weave.visualization.plotters
 		 */
 		private function setupData():void
 		{
+			_keyToNode = new Dictionary();
+			_edges.length = 0;
+
+			var idToNodeKey:Dictionary = new Dictionary();
 			var i:int;
-			
+
 			// setup the nodes map
 			{ // force garbage collection
 				var nodesKeys:Array = nodesColumn.keys;
+				_numNodes = nodesKeys.length;
 				for (i = 0; i < nodesKeys.length; ++i)
 				{
+					var key:IQualifiedKey = nodesKeys[i];
 					var newNode:GraphNode = new GraphNode();
-					newNode.id = nodesColumn.getValueFromKey(nodesKeys[i], Number) as Number;
-					newNode.position.x = Math.random();
-					newNode.position.y = Math.random();
-					_keyToNode[nodesKeys[i]] = newNode;
+					newNode.id = nodesColumn.getValueFromKey(key, Number) as Number;
+					newNode.key = key;
+					_keyToNode[key] = newNode;
+					idToNodeKey[newNode.id] = key;
 				}
 				nodesKeys = null;
 			}
 			
 			// setup the edges array
 			{ // force garbage collection
-				/*var edgesKeys:Array = edgeSourceColumn.keys;
+				var edgesKeys:Array = edgeSourceColumn.keys;
 				for (i = 0; i < edgesKeys.length; ++i)
 				{
-					var edgeKey:IQualifiedKey = edgesKeys[i] as IQualifiedKey;
+					var edgeKey:IQualifiedKey = edgesKeys[i];
 					var idSource:int = edgeSourceColumn.getValueFromKey(edgeKey, int) as int;
 					var idTarget:int = edgeTargetColumn.getValueFromKey(edgeKey, int) as int;
 					var newEdge:GraphEdge = new GraphEdge();
-					var source:GraphNode = _keyToNode[];
-					var target:GraphNode = _keyToNode[idTarget];
+					var source:GraphNode = _keyToNode[ idToNodeKey[idSource] ];
+					var target:GraphNode = _keyToNode[ idToNodeKey[idTarget] ];
 					
 					if (!source)
 					{
@@ -338,14 +343,16 @@ package weave.visualization.plotters
 					newEdge.target = target;
 					_edges.push(newEdge);
 					
-					var connectedNodes:Array = _idToConnectedNodes[source.id] || [];
+					source.addConnection(target);
+					target.addConnection(source);
+					/*var connectedNodes:Array = _idToConnectedNodes[source.id] || [];
 					connectedNodes.push(target);
 					_idToConnectedNodes[source.id] = connectedNodes;
 					
 					connectedNodes = _idToConnectedNodes[target.id] || [];
 					connectedNodes.push(source);
-					_idToConnectedNodes[target.id] = connectedNodes;
-				}*/
+					_idToConnectedNodes[target.id] = connectedNodes;*/
+				}
 			}
 		}
 		
@@ -384,10 +391,6 @@ package weave.visualization.plotters
 		
 		private function handleColumnsChange():void
 		{
-			_keyToNode.length = 0;
-			_keyToConnectedNodes.length = 0;
-			_edges.length = 0;
-			
 			// set the keys
 			setKeySource(nodesColumn);
 			
@@ -431,8 +434,9 @@ package weave.visualization.plotters
 			var dx:Number = b.position.x - a.position.x;
 			var dy:Number = b.position.y - a.position.y;
 			var dx2:Number = dx * dx;
-			var dy2:Number = dy * dy;			
-			var distance:Number = Math.sqrt(dx2 + dy2);
+			var dy2:Number = dy * dy;
+			var distanceSq:Number = dx2 + dy2;
+			var distance:Number = Math.sqrt(distanceSq);
 			var forceMagnitude:Number = distance * attractionConstant.value; 
 			
 			var forceX:Number = forceMagnitude * dx / distance;
@@ -473,11 +477,16 @@ package weave.visualization.plotters
 			output.y = forceY;
 			return output;
 		}
+		
+		//private const _
 		/**
 		 * Update the positions of the nodes using a force directed layout.
 		 */
-		private function forceDirected():void
+		private function forceDirected(keys:Array = null):void
 		{
+			if (keys == null)
+				keys = nodesColumn.keys;
+			
 			// if we should stop iterating
 			if (shouldStop.value == true)
 			{
@@ -489,7 +498,7 @@ package weave.visualization.plotters
 			
 			DebugTimer.begin();
 			
-			repulsionConstant.value = (100*100) / _keyToNode.length;
+			repulsionConstant.value = (100*100) / _numNodes;
 			attractionConstant.value = 1 / Math.sqrt(repulsionConstant.value);
 			algorithmRunning.value = true;
 			var currentNode:GraphNode;
@@ -497,27 +506,33 @@ package weave.visualization.plotters
 			var kineticEnergy:Number = 0;
 			
 			_nextIncrement += (_nextIncrement == _iterations) ? drawIncrement.value : 0;
-			var iterationsDelayed:Boolean = false;
 			for (; _iterations < maxIterations.value; ++_iterations)
 			{
 				// if this function has run for more than 100ms, call later to finish
 				if (StageUtils.shouldCallLater)
 				{
-					StageUtils.callLater(this, forceDirected, null, true);
+					StageUtils.callLater(this, forceDirected, [keys], true);
 					DebugTimer.end();
 					return;
 				}
 				outputBounds.reset();
-				for (var obj:Object in _keyToNode)
+				//_allowedBounds.reset();
+				for each (var obj:Object in keys)
 				{
 					var key:IQualifiedKey = obj as IQualifiedKey;
+					currentNode = _keyToNode[key];
+					//_allowedBounds.includePoint(currentNode.position);
 					netForce.x = 0;
 					netForce.y = 0;
 					
 					// calculate edge attraction in connected nodes
-					var connectedNodes:Array = _keyToConnectedNodes[key];
+					var connectedNodes:Vector.<GraphNode> = (_keyToNode[key] as GraphNode).connections;
 					for each (var connectedNode:GraphNode in connectedNodes)
 					{
+						// if keys is a subset of nodesColumn.keys, we don't want to compute attraction of unselected nodes
+						if (keys.indexOf(connectedNode.key) < 0)
+							continue;
+						
 						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
 						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
 							trace('NaN Hooke');
@@ -528,8 +543,9 @@ package weave.visualization.plotters
 						continue;
 					
 					// calculate repulsion with every node except itself
-					for each (var otherNode:GraphNode in _keyToNode)
+					for each (var otherKey:Object in keys)
 					{
+						var otherNode:GraphNode = _keyToNode[otherKey];
 						if (currentNode == otherNode) 
 							continue;
 						
@@ -543,14 +559,13 @@ package weave.visualization.plotters
 					// TODO: handle unconnected nodes (don't count their forces, but push them away)
 					
 					// calculate velocity
-					currentNode.velocity.x = (currentNode.velocity.x + netForce.x) * dampingConstant.value;
-					currentNode.velocity.y = (currentNode.velocity.y + netForce.y) * dampingConstant.value;
+					currentNode.velocity.x = (currentNode.velocity.x + netForce.x) * (1 - dampingConstant.value);
+					currentNode.velocity.y = (currentNode.velocity.y + netForce.y) * (1 - dampingConstant.value);
 					
 					// determine the next position (don't modify the current position because we need it for calculating KE
 					currentNode.nextPosition.x = currentNode.position.x + currentNode.velocity.x;
 					currentNode.nextPosition.y = currentNode.position.y + currentNode.velocity.y;
 					outputBounds.includePoint(currentNode.nextPosition);
-					//_allowedBounds.constrainPoint(currentNode.nextPosition);
 				}
 
 				// calculate the KE, update positions, and shift allowedBounds
@@ -562,16 +577,9 @@ package weave.visualization.plotters
 					var p1:Point = currentNode.position;
 					var p2:Point = currentNode.nextPosition;
 					kineticEnergy += ComputationalGeometryUtils.getDistanceFromPoint(p1.x, p1.y, p2.x, p2.y);
-
 					p1.x = p2.x;
 					p1.y = p2.y;
 				}
-				/*_allowedBounds.setCenteredRectangle(
-							outputBounds.getXCenter(),
-							outputBounds.getYCenter(),
-							100, 100);*/
-				
-				
 				//trace(kineticEnergy);
 
 				// if we've gone over the number of drawing iterations
@@ -596,7 +604,7 @@ package weave.visualization.plotters
 			if (reachedEquilibrium == true || _iterations >= maxIterations.value)
 				_spatialCallbacks.triggerCallbacks();
 			else // or call later to finish
-				StageUtils.callLater(this, forceDirected, null, true);
+				StageUtils.callLater(this, forceDirected, [keys], true);
 			
 			// trigger drawing callbacks
 			getCallbackCollection(this).triggerCallbacks();

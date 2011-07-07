@@ -31,6 +31,7 @@
 			
 			import weave.Weave;
 			import weave.api.data.IAttributeColumn;
+			import weave.api.data.IKeySet;
 			import weave.api.getCallbackCollection;
 			import weave.api.linkBindableProperty;
 			import weave.api.newLinkableChild;
@@ -39,9 +40,11 @@
 			import weave.core.SessionManager;
 			import weave.data.AttributeColumns.DynamicColumn;
 			import weave.data.AttributeColumns.FilteredColumn;
+			import weave.ui.CustomContextMenuManager;
 			import weave.ui.DraggablePanel;
 			import weave.utils.ColumnUtils;
 			import weave.utils.ProbeTextUtils;
+			import weave.utils.SpatialIndex;
 			import weave.visualization.plotters.GraphPlotter;
 			import weave.visualization.plotters.styles.SolidFillStyle;
 
@@ -74,8 +77,32 @@
 				(nodeComponent as DynamicColumnComponent).dynamicObject = nodesColumn;
 				(edgeSourceComponent as DynamicColumnComponent).dynamicObject = edgeSourceColumn;
 				(edgeTargetComponent as DynamicColumnComponent).dynamicObject = edgeTargetColumn;
+				this.contextMenu = new ContextMenu();
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Force Direct Selection', this, handleForceDirectSelection);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 25 More Iterations', this, handle25MoreIterations);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 100 More Iterations', this, handle100MoreIterations);
 			}
-			
+			private function handle25MoreIterations(event:ContextMenuEvent):void
+			{
+				_plotter.maxIterations.value += 25;
+				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
+				var keys:Array = (keySet && keySet.keys.length > 0) ? keySet.keys : null;
+				_plotter.continueComputation(keys);
+			}
+			private function handle100MoreIterations(event:ContextMenuEvent):void
+			{
+				_plotter.maxIterations.value += 100;
+				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
+				var keys:Array = (keySet && keySet.keys.length > 0) ? keySet.keys : null;
+				_plotter.continueComputation(keys);
+			}
+			private function handleForceDirectSelection(event:ContextMenuEvent):void
+			{
+				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
+				var keys:Array = (keySet && keySet.keys.length > 0)? keySet.keys : null;
+				_plotter.runForceDirect(keySet.keys);
+			}
+				
 			override public function getSelectableAttributeNames():Array
 			{
 				return ["Color", "Node IDs", "Edge Source IDs", "Edge Target IDs"];

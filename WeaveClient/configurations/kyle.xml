@@ -19,12 +19,10 @@
       <ReferencedColumn>
         <dynamicColumnReference encoding="dynamic">
           <HierarchyColumnReference>
-            <dataSourceName>WFSDataSource</dataSourceName>
+            <dataSourceName>GNUTELLA08-NODES TRUNCATED</dataSourceName>
             <hierarchyPath encoding="xml">
               <hierarchy>
-                <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish streams" name="sf:streams">
-                  <attribute dataType="String" featureTypeName="sf:streams" name="label" keyType="sf:streams" title="label"/>
-                </category>
+                <attribute csvColumn="Node ID" keyType="GNUTELLA08-NODES TRUNCATED" title="Node ID"/>
               </hierarchy>
             </hierarchyPath>
           </HierarchyColumnReference>
@@ -45,7 +43,7 @@
       <GlobalObjectReference name="defaultColorBinColumn"/>
     </internalDynamicColumn>
     <ramp encoding="xml">
-      <colorRamp colorblindSafe="true" name="Blues" dataFormat="sequential" category="basic" singlehue="true" source="ColorBrewer">
+      <colorRamp category="basic" name="Blues" dataFormat="sequential" singlehue="true" colorblindSafe="true" source="ColorBrewer">
         <node color="0xEFF3FF" position="0"/>
         <node color="0xBDD7E7" position="0.25"/>
         <node color="0x6BAED6" position="0.5"/>
@@ -78,6 +76,7 @@
     <enableAddDimensionSliderTool>true</enableAddDimensionSliderTool>
     <enableAddGaugeTool>true</enableAddGaugeTool>
     <enableAddGrailsDataSource>true</enableAddGrailsDataSource>
+    <enableAddGraphTool>true</enableAddGraphTool>
     <enableAddHistogram>true</enableAddHistogram>
     <enableAddLineChart>true</enableAddLineChart>
     <enableAddMap>true</enableAddMap>
@@ -100,7 +99,7 @@
     <enableExportDataTable>true</enableExportDataTable>
     <enableExportToolImage>true</enableExportToolImage>
     <enableFullscreen>true</enableFullscreen>
-    <enableGeometryProbing>false</enableGeometryProbing>
+    <enableGeometryProbing>true</enableGeometryProbing>
     <enableGoFullscreen>true</enableGoFullscreen>
     <enableManageSavedSelections>true</enableManageSavedSelections>
     <enableManageSavedSubsets>true</enableManageSavedSubsets>
@@ -135,11 +134,10 @@
     <enableToolSelection>true</enableToolSelection>
     <enableUserPreferences>true</enableUserPreferences>
     <enableWindowMenu>true</enableWindowMenu>
-    <maxVerticesGeometryProbing>100</maxVerticesGeometryProbing>
     <pageTitle>Sample Weave Configuration</pageTitle>
     <panelTitleFontBold>false</panelTitleFontBold>
     <panelTitleFontColor>16777215</panelTitleFontColor>
-    <panelTitleFontFamily/>
+    <panelTitleFontFamily>Verdana</panelTitleFontFamily>
     <panelTitleFontItalic>false</panelTitleFontItalic>
     <panelTitleFontSize>10</panelTitleFontSize>
     <panelTitleFontUnderline>false</panelTitleFontUnderline>
@@ -161,7 +159,7 @@ Google Images|http://images.google.com/images?q=
 Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
     <selectionAlphaAmount>0.5</selectionAlphaAmount>
     <selectionBlurringAmount>4</selectionBlurringAmount>
-    <sessionStateEditor>TextArea</sessionStateEditor>
+    <sessionStateEditor>DataGrid</sessionStateEditor>
     <shadowAlpha>0.5</shadowAlpha>
     <shadowAngle>45</shadowAngle>
     <shadowBlur>4</shadowBlur>
@@ -184,7 +182,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Country Name" keyType="Country Code" csvColumn="Country Name" title="Country Name"/>
+              <attribute csvColumn="Country Name" name="Country Name" keyType="Country Code" title="Country Name"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -196,7 +194,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Population, female (% of total)" keyType="Country Code" csvColumn="Population, female (% of total)" title="Population, female (% of total)"/>
+              <attribute csvColumn="Population, female (% of total)" name="Population, female (% of total)" keyType="Country Code" title="Population, female (% of total)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -208,7 +206,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Rural population (% of total population)" keyType="Country Code" csvColumn="Rural population (% of total population)" title="Rural population (% of total population)"/>
+              <attribute csvColumn="Rural population (% of total population)" name="Rural population (% of total population)" keyType="Country Code" title="Rural population (% of total population)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -220,7 +218,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Population ages 65 and above (% of total)" keyType="Country Code" csvColumn="Population ages 65 and above (% of total)" title="Population ages 65 and above (% of total)"/>
+              <attribute csvColumn="Population ages 65 and above (% of total)" name="Population ages 65 and above (% of total)" keyType="Country Code" title="Population ages 65 and above (% of total)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -232,7 +230,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Population ages 15-64 (% of total)" keyType="Country Code" csvColumn="Population ages 15-64 (% of total)" title="Population ages 15-64 (% of total)"/>
+              <attribute csvColumn="Population ages 15-64 (% of total)" name="Population ages 15-64 (% of total)" keyType="Country Code" title="Population ages 15-64 (% of total)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -244,7 +242,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Urban population (% of total)" keyType="Country Code" csvColumn="Urban population (% of total)" title="Urban population (% of total)"/>
+              <attribute csvColumn="Urban population (% of total)" name="Urban population (% of total)" keyType="Country Code" title="Urban population (% of total)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -256,7 +254,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
           <dataSourceName>WorldPopulationIndicators2.csv</dataSourceName>
           <hierarchyPath encoding="xml">
             <hierarchy keyType="Country Code">
-              <attribute name="Population ages 0-14 (% of total)" keyType="Country Code" csvColumn="Population ages 0-14 (% of total)" title="Population ages 0-14 (% of total)"/>
+              <attribute csvColumn="Population ages 0-14 (% of total)" name="Population ages 0-14 (% of total)" keyType="Country Code" title="Population ages 0-14 (% of total)"/>
             </hierarchy>
           </hierarchyPath>
         </HierarchyColumnReference>
@@ -267,30 +265,30 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldAgricultureIndicators.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="Country Name" title="Year" csvColumn="Year"/>
-        <attribute keyType="Country Name" title="YearCode" csvColumn="YearCode"/>
-        <attribute keyType="Country Name" title="Country Name" csvColumn="Country Name"/>
-        <attribute keyType="Country Name" title="Country Code" csvColumn="Country Code"/>
-        <attribute keyType="Country Name" title="Agricultural machinery, tractors" csvColumn="Agricultural machinery, tractors"/>
-        <attribute keyType="Country Name" title="Agricultural machinery, tractors per 100 sq. km of arable land" csvColumn="Agricultural machinery, tractors per 100 sq. km of arable land"/>
-        <attribute keyType="Country Name" title="Agriculture value added per worker (constant 2000 US$)" csvColumn="Agriculture value added per worker (constant 2000 US$)"/>
-        <attribute keyType="Country Name" title="Cereal yield (kg per hectare)" csvColumn="Cereal yield (kg per hectare)"/>
-        <attribute keyType="Country Name" title="Crop production index (1999-2001 = 100)" csvColumn="Crop production index (1999-2001 = 100)"/>
-        <attribute keyType="Country Name" title="Economically active population in agriculture&#x9;(number)" csvColumn="Economically active population in agriculture&#x9;(number)"/>
-        <attribute keyType="Country Name" title="Fertilizer consumption (metric tons)" csvColumn="Fertilizer consumption (metric tons)"/>
-        <attribute keyType="Country Name" title="Food production index (1999-2001 = 100)" csvColumn="Food production index (1999-2001 = 100)"/>
-        <attribute keyType="Country Name" title="Land under cereal production (hectares)" csvColumn="Land under cereal production (hectares)"/>
-        <attribute keyType="Country Name" title="Livestock production index (1999-2001 = 100)" csvColumn="Livestock production index (1999-2001 = 100)"/>
-        <attribute keyType="Country Name" title="Agricultural land (% of land area)" csvColumn="Agricultural land (% of land area)"/>
-        <attribute keyType="Country Name" title="Agricultural land (sq. km)" csvColumn="Agricultural land (sq. km)"/>
-        <attribute keyType="Country Name" title="Arable land (% of land area)" csvColumn="Arable land (% of land area)"/>
-        <attribute keyType="Country Name" title="Arable land (hectares per person)" csvColumn="Arable land (hectares per person)"/>
-        <attribute keyType="Country Name" title="Arable land (hectares)" csvColumn="Arable land (hectares)"/>
-        <attribute keyType="Country Name" title="Forest area (% of land area)" csvColumn="Forest area (% of land area)"/>
-        <attribute keyType="Country Name" title="Forest area (sq. km)" csvColumn="Forest area (sq. km)"/>
-        <attribute keyType="Country Name" title="Land area (sq. km)" csvColumn="Land area (sq. km)"/>
-        <attribute keyType="Country Name" title="Permanent cropland (% of land area)" csvColumn="Permanent cropland (% of land area)"/>
-        <attribute keyType="Country Name" title="Surface area (sq. km)" csvColumn="Surface area (sq. km)"/>
+        <attribute csvColumn="Year" title="Year" keyType="Country Name"/>
+        <attribute csvColumn="YearCode" title="YearCode" keyType="Country Name"/>
+        <attribute csvColumn="Country Name" title="Country Name" keyType="Country Name"/>
+        <attribute csvColumn="Country Code" title="Country Code" keyType="Country Name"/>
+        <attribute csvColumn="Agricultural machinery, tractors" title="Agricultural machinery, tractors" keyType="Country Name"/>
+        <attribute csvColumn="Agricultural machinery, tractors per 100 sq. km of arable land" title="Agricultural machinery, tractors per 100 sq. km of arable land" keyType="Country Name"/>
+        <attribute csvColumn="Agriculture value added per worker (constant 2000 US$)" title="Agriculture value added per worker (constant 2000 US$)" keyType="Country Name"/>
+        <attribute csvColumn="Cereal yield (kg per hectare)" title="Cereal yield (kg per hectare)" keyType="Country Name"/>
+        <attribute csvColumn="Crop production index (1999-2001 = 100)" title="Crop production index (1999-2001 = 100)" keyType="Country Name"/>
+        <attribute csvColumn="Economically active population in agriculture&#x9;(number)" title="Economically active population in agriculture&#x9;(number)" keyType="Country Name"/>
+        <attribute csvColumn="Fertilizer consumption (metric tons)" title="Fertilizer consumption (metric tons)" keyType="Country Name"/>
+        <attribute csvColumn="Food production index (1999-2001 = 100)" title="Food production index (1999-2001 = 100)" keyType="Country Name"/>
+        <attribute csvColumn="Land under cereal production (hectares)" title="Land under cereal production (hectares)" keyType="Country Name"/>
+        <attribute csvColumn="Livestock production index (1999-2001 = 100)" title="Livestock production index (1999-2001 = 100)" keyType="Country Name"/>
+        <attribute csvColumn="Agricultural land (% of land area)" title="Agricultural land (% of land area)" keyType="Country Name"/>
+        <attribute csvColumn="Agricultural land (sq. km)" title="Agricultural land (sq. km)" keyType="Country Name"/>
+        <attribute csvColumn="Arable land (% of land area)" title="Arable land (% of land area)" keyType="Country Name"/>
+        <attribute csvColumn="Arable land (hectares per person)" title="Arable land (hectares per person)" keyType="Country Name"/>
+        <attribute csvColumn="Arable land (hectares)" title="Arable land (hectares)" keyType="Country Name"/>
+        <attribute csvColumn="Forest area (% of land area)" title="Forest area (% of land area)" keyType="Country Name"/>
+        <attribute csvColumn="Forest area (sq. km)" title="Forest area (sq. km)" keyType="Country Name"/>
+        <attribute csvColumn="Land area (sq. km)" title="Land area (sq. km)" keyType="Country Name"/>
+        <attribute csvColumn="Permanent cropland (% of land area)" title="Permanent cropland (% of land area)" keyType="Country Name"/>
+        <attribute csvColumn="Surface area (sq. km)" title="Surface area (sq. km)" keyType="Country Name"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,"Agricultural machinery, tractors","Agricultural machinery, tractors per 100 sq. km of arable land",Agriculture value added per worker (constant 2000 US$),Cereal yield (kg per hectare),Crop production index (1999-2001 = 100),Economically active population in agriculture	(number),Fertilizer consumption (metric tons),Food production index (1999-2001 = 100),Land under cereal production (hectares),Livestock production index (1999-2001 = 100),Agricultural land (% of land area),Agricultural land (sq. km),Arable land (% of land area),Arable land (hectares per person),Arable land (hectares),Forest area (% of land area),Forest area (sq. km),Land area (sq. km),Permanent cropland (% of land area),Surface area (sq. km)
@@ -538,21 +536,21 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldPopulationIndicators.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="Country Code" title="Year" csvColumn="Year"/>
-        <attribute keyType="Country Code" title="YearCode" csvColumn="YearCode"/>
-        <attribute keyType="Country Code" title="Country Name" csvColumn="Country Name"/>
-        <attribute keyType="Country Code" title="Country Code" csvColumn="Country Code"/>
-        <attribute keyType="Country Code" title="Population ages 0-14 (% of total)" csvColumn="Population ages 0-14 (% of total)"/>
-        <attribute keyType="Country Code" title="Population ages 15-64 (% of total)" csvColumn="Population ages 15-64 (% of total)"/>
-        <attribute keyType="Country Code" title="Population ages 65 and above (% of total)" csvColumn="Population ages 65 and above (% of total)"/>
-        <attribute keyType="Country Code" title="Population density (people per sq. km)" csvColumn="Population density (people per sq. km)"/>
-        <attribute keyType="Country Code" title="Population growth (annual %)" csvColumn="Population growth (annual %)"/>
-        <attribute keyType="Country Code" title="Population in the largest city (% of urban population)" csvColumn="Population in the largest city (% of urban population)"/>
-        <attribute keyType="Country Code" title="Population, female (% of total)" csvColumn="Population, female (% of total)"/>
-        <attribute keyType="Country Code" title="Rural population (% of total population)" csvColumn="Rural population (% of total population)"/>
-        <attribute keyType="Country Code" title="Urban population (% of total)" csvColumn="Urban population (% of total)"/>
-        <attribute keyType="Country Code" title="Urban population growth (annual %)" csvColumn="Urban population growth (annual %)"/>
-        <attribute keyType="Country Code" title="Rural population growth (annual %)" csvColumn="Rural population growth (annual %)"/>
+        <attribute csvColumn="Year" title="Year" keyType="Country Code"/>
+        <attribute csvColumn="YearCode" title="YearCode" keyType="Country Code"/>
+        <attribute csvColumn="Country Name" title="Country Name" keyType="Country Code"/>
+        <attribute csvColumn="Country Code" title="Country Code" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 0-14 (% of total)" title="Population ages 0-14 (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 15-64 (% of total)" title="Population ages 15-64 (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 65 and above (% of total)" title="Population ages 65 and above (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population density (people per sq. km)" title="Population density (people per sq. km)" keyType="Country Code"/>
+        <attribute csvColumn="Population growth (annual %)" title="Population growth (annual %)" keyType="Country Code"/>
+        <attribute csvColumn="Population in the largest city (% of urban population)" title="Population in the largest city (% of urban population)" keyType="Country Code"/>
+        <attribute csvColumn="Population, female (% of total)" title="Population, female (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Rural population (% of total population)" title="Rural population (% of total population)" keyType="Country Code"/>
+        <attribute csvColumn="Urban population (% of total)" title="Urban population (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Urban population growth (annual %)" title="Urban population growth (annual %)" keyType="Country Code"/>
+        <attribute csvColumn="Rural population growth (annual %)" title="Rural population growth (annual %)" keyType="Country Code"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,Population ages 0-14 (% of total),Population ages 15-64 (% of total),Population ages 65 and above (% of total),Population density (people per sq. km),Population growth (annual %),Population in the largest city (% of urban population),"Population, female (% of total)",Rural population (% of total population),Urban population (% of total),Urban population growth (annual %),Rural population growth (annual %)
@@ -800,21 +798,21 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldPopulationIndicators2.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="Country Code" title="Year" csvColumn="Year"/>
-        <attribute keyType="Country Code" title="YearCode" csvColumn="YearCode"/>
-        <attribute keyType="Country Code" title="Country Name" csvColumn="Country Name"/>
-        <attribute keyType="Country Code" title="Country Code" csvColumn="Country Code"/>
-        <attribute keyType="Country Code" title="Population ages 0-14 (% of total)" csvColumn="Population ages 0-14 (% of total)"/>
-        <attribute keyType="Country Code" title="Population ages 15-64 (% of total)" csvColumn="Population ages 15-64 (% of total)"/>
-        <attribute keyType="Country Code" title="Population ages 65 and above (% of total)" csvColumn="Population ages 65 and above (% of total)"/>
-        <attribute keyType="Country Code" title="Population density (people per sq. km)" csvColumn="Population density (people per sq. km)"/>
-        <attribute keyType="Country Code" title="Population growth (annual %)" csvColumn="Population growth (annual %)"/>
-        <attribute keyType="Country Code" title="Population in the largest city (% of urban population)" csvColumn="Population in the largest city (% of urban population)"/>
-        <attribute keyType="Country Code" title="Population, female (% of total)" csvColumn="Population, female (% of total)"/>
-        <attribute keyType="Country Code" title="Rural population (% of total population)" csvColumn="Rural population (% of total population)"/>
-        <attribute keyType="Country Code" title="Urban population (% of total)" csvColumn="Urban population (% of total)"/>
-        <attribute keyType="Country Code" title="Urban population growth (annual %)" csvColumn="Urban population growth (annual %)"/>
-        <attribute keyType="Country Code" title="Rural population growth (annual %)" csvColumn="Rural population growth (annual %)"/>
+        <attribute csvColumn="Year" title="Year" keyType="Country Code"/>
+        <attribute csvColumn="YearCode" title="YearCode" keyType="Country Code"/>
+        <attribute csvColumn="Country Name" title="Country Name" keyType="Country Code"/>
+        <attribute csvColumn="Country Code" title="Country Code" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 0-14 (% of total)" title="Population ages 0-14 (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 15-64 (% of total)" title="Population ages 15-64 (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population ages 65 and above (% of total)" title="Population ages 65 and above (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Population density (people per sq. km)" title="Population density (people per sq. km)" keyType="Country Code"/>
+        <attribute csvColumn="Population growth (annual %)" title="Population growth (annual %)" keyType="Country Code"/>
+        <attribute csvColumn="Population in the largest city (% of urban population)" title="Population in the largest city (% of urban population)" keyType="Country Code"/>
+        <attribute csvColumn="Population, female (% of total)" title="Population, female (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Rural population (% of total population)" title="Rural population (% of total population)" keyType="Country Code"/>
+        <attribute csvColumn="Urban population (% of total)" title="Urban population (% of total)" keyType="Country Code"/>
+        <attribute csvColumn="Urban population growth (annual %)" title="Urban population growth (annual %)" keyType="Country Code"/>
+        <attribute csvColumn="Rural population growth (annual %)" title="Rural population growth (annual %)" keyType="Country Code"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,Population ages 0-14 (% of total),Population ages 15-64 (% of total),Population ages 65 and above (% of total),Population density (people per sq. km),Population growth (annual %),Population in the largest city (% of urban population),"Population, female (% of total)",Rural population (% of total population),Urban population (% of total),Urban population growth (annual %),Rural population growth (annual %)
@@ -1056,9 +1054,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="Nodes">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="Nodes" title="Id" csvColumn="Id"/>
-        <attribute keyType="Nodes" title="Label" csvColumn="Label"/>
-        <attribute keyType="Nodes" title="Value" csvColumn="Value"/>
+        <attribute csvColumn="Id" title="Id" keyType="Nodes"/>
+        <attribute csvColumn="Label" title="Label" keyType="Nodes"/>
+        <attribute csvColumn="Value" title="Value" keyType="Nodes"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Id,Label,Value
@@ -1074,10 +1072,10 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="Edges">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="Edges" title="Id" csvColumn="Id"/>
-        <attribute keyType="Edges" title="Source" csvColumn="Source"/>
-        <attribute keyType="Edges" title="Target" csvColumn="Target"/>
-        <attribute keyType="Edges" title="Weight" csvColumn="Weight"/>
+        <attribute csvColumn="Id" title="Id" keyType="Edges"/>
+        <attribute csvColumn="Source" title="Source" keyType="Edges"/>
+        <attribute csvColumn="Target" title="Target" keyType="Edges"/>
+        <attribute csvColumn="Weight" title="Weight" keyType="Edges"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Id,Source,Target,Weight
@@ -1092,7 +1090,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="GNUTELLA08-NODES TRUNCATED">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="GNUTELLA08-NODES TRUNCATED" title="Node ID" csvColumn="Node ID"/>
+        <attribute csvColumn="Node ID" title="Node ID" keyType="GNUTELLA08-NODES TRUNCATED"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -1662,9 +1660,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="GNUTELLA08-EDGES TRUNCATED">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" title="Edge ID" csvColumn="Edge ID"/>
-        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" title="From" csvColumn="From"/>
-        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" title="To" csvColumn="To"/>
+        <attribute csvColumn="Edge ID" title="Edge ID" keyType="GNUTELLA08-EDGES TRUNCATED"/>
+        <attribute csvColumn="From" title="From" keyType="GNUTELLA08-EDGES TRUNCATED"/>
+        <attribute csvColumn="To" title="To" keyType="GNUTELLA08-EDGES TRUNCATED"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -2584,7 +2582,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes3">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="nodes3" title="Node ID" csvColumn="Node ID"/>
+        <attribute csvColumn="Node ID" title="Node ID" keyType="nodes3"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -2809,9 +2807,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges3">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="edges3" title="Edge ID" csvColumn="Edge ID"/>
-        <attribute keyType="edges3" title="From" csvColumn="From"/>
-        <attribute keyType="edges3" title="To" csvColumn="To"/>
+        <attribute csvColumn="Edge ID" title="Edge ID" keyType="edges3"/>
+        <attribute csvColumn="From" title="From" keyType="edges3"/>
+        <attribute csvColumn="To" title="To" keyType="edges3"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -3176,7 +3174,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes4">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="nodes4" title="id" csvColumn="id"/>
+        <attribute csvColumn="id" title="id" keyType="nodes4"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>id
@@ -3197,8 +3195,8 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges4">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="edges4" title="from" csvColumn="from"/>
-        <attribute keyType="edges4" title="to" csvColumn="to"/>
+        <attribute csvColumn="from" title="from" keyType="edges4"/>
+        <attribute csvColumn="to" title="to" keyType="edges4"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>from,to
@@ -3224,7 +3222,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes5">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="nodes5" title="Node ID" csvColumn="Node ID"/>
+        <attribute csvColumn="Node ID" title="Node ID" keyType="nodes5"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -3345,9 +3343,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges5">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute keyType="edges5" title="Edge ID" csvColumn="Edge ID"/>
-        <attribute keyType="edges5" title="From" csvColumn="From"/>
-        <attribute keyType="edges5" title="To" csvColumn="To"/>
+        <attribute csvColumn="Edge ID" title="Edge ID" keyType="edges5"/>
+        <attribute csvColumn="From" title="From" keyType="edges5"/>
+        <attribute csvColumn="To" title="To" keyType="edges5"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -3484,103 +3482,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
     <keyType>edges5</keyType>
     <url/>
   </CSVDataSource>
-  <WFSDataSource name="WFSDataSource">
-    <attributeHierarchy encoding="xml">
-      <hierarchy name="The ancient geographes INC">
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Manhattan (NY) landmarks" name="tiger:poly_landmarks">
-          <attribute featureTypeName="tiger:poly_landmarks" dataType="Geometry" name="the_geom" keyType="tiger:poly_landmarks" projectionSRS="EPSG:4326" title="the_geom"/>
-          <attribute dataType="Number" featureTypeName="tiger:poly_landmarks" name="LAND" keyType="tiger:poly_landmarks" title="LAND"/>
-          <attribute dataType="String" featureTypeName="tiger:poly_landmarks" name="CFCC" keyType="tiger:poly_landmarks" title="CFCC"/>
-          <attribute dataType="String" featureTypeName="tiger:poly_landmarks" name="LANAME" keyType="tiger:poly_landmarks" title="LANAME"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Manhattan (NY) points of interest" name="tiger:poi"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Manhattan (NY) roads" name="tiger:tiger_roads"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish archeological sites" name="sf:archsites"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish bug locations" name="sf:bugsites"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish restricted areas" name="sf:restricted"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish roads" name="sf:roads"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:26713" title="Spearfish streams" name="sf:streams">
-          <attribute featureTypeName="sf:streams" dataType="Geometry" name="the_geom" projectionSRS="EPSG:26713" keyType="sf:streams" title="the_geom"/>
-          <attribute dataType="Number" featureTypeName="sf:streams" name="cat" keyType="sf:streams" title="cat"/>
-          <attribute dataType="String" featureTypeName="sf:streams" name="label" keyType="sf:streams" title="label"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Tasmania cities" name="topp:tasmania_cities">
-          <attribute dataType="Number" featureTypeName="topp:tasmania_cities" name="the_geom" keyType="topp:tasmania_cities" title="the_geom"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_cities" name="CITY_NAME" keyType="topp:tasmania_cities" title="CITY_NAME"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_cities" name="ADMIN_NAME" keyType="topp:tasmania_cities" title="ADMIN_NAME"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_cities" name="CNTRY_NAME" keyType="topp:tasmania_cities" title="CNTRY_NAME"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_cities" name="STATUS" keyType="topp:tasmania_cities" title="STATUS"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_cities" name="POP_CLASS" keyType="topp:tasmania_cities" title="POP_CLASS"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Tasmania roads" name="topp:tasmania_roads"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Tasmania state boundaries" name="topp:tasmania_state_boundaries">
-          <attribute featureTypeName="topp:tasmania_state_boundaries" dataType="Geometry" name="the_geom" keyType="topp:tasmania_state_boundaries" projectionSRS="EPSG:4326" title="the_geom"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_state_boundaries" name="STATE" keyType="topp:tasmania_state_boundaries" title="STATE"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_state_boundaries" name="COUNTRY" keyType="topp:tasmania_state_boundaries" title="COUNTRY"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_state_boundaries" name="CURR_TYPE" keyType="topp:tasmania_state_boundaries" title="CURR_TYPE"/>
-          <attribute dataType="String" featureTypeName="topp:tasmania_state_boundaries" name="CURR_CODE" keyType="topp:tasmania_state_boundaries" title="CURR_CODE"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Tasmania water bodies" name="topp:tasmania_water_bodies"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="USA Population" name="topp:states">
-          <attribute featureTypeName="topp:states" dataType="Geometry" name="the_geom" keyType="topp:states" projectionSRS="EPSG:4326" title="the_geom"/>
-          <attribute dataType="String" featureTypeName="topp:states" name="STATE_NAME" keyType="topp:states" title="STATE_NAME"/>
-          <attribute dataType="String" featureTypeName="topp:states" name="STATE_FIPS" keyType="topp:states" title="STATE_FIPS"/>
-          <attribute dataType="String" featureTypeName="topp:states" name="SUB_REGION" keyType="topp:states" title="SUB_REGION"/>
-          <attribute dataType="String" featureTypeName="topp:states" name="STATE_ABBR" keyType="topp:states" title="STATE_ABBR"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="LAND_KM" keyType="topp:states" title="LAND_KM"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="WATER_KM" keyType="topp:states" title="WATER_KM"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="PERSONS" keyType="topp:states" title="PERSONS"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="FAMILIES" keyType="topp:states" title="FAMILIES"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="HOUSHOLD" keyType="topp:states" title="HOUSHOLD"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="MALE" keyType="topp:states" title="MALE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="FEMALE" keyType="topp:states" title="FEMALE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="WORKERS" keyType="topp:states" title="WORKERS"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="DRVALONE" keyType="topp:states" title="DRVALONE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="CARPOOL" keyType="topp:states" title="CARPOOL"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="PUBTRANS" keyType="topp:states" title="PUBTRANS"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="EMPLOYED" keyType="topp:states" title="EMPLOYED"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="UNEMPLOY" keyType="topp:states" title="UNEMPLOY"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="SERVICE" keyType="topp:states" title="SERVICE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="MANUAL" keyType="topp:states" title="MANUAL"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="P_MALE" keyType="topp:states" title="P_MALE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="P_FEMALE" keyType="topp:states" title="P_FEMALE"/>
-          <attribute dataType="Number" featureTypeName="topp:states" name="SAMP_POP" keyType="topp:states" title="SAMP_POP"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="World rectangle" name="tiger:giant_polygon">
-          <attribute featureTypeName="tiger:giant_polygon" dataType="Geometry" name="the_geom" keyType="tiger:giant_polygon" projectionSRS="EPSG:4326" title="the_geom"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="ign_geopla_region_Type" name="pg:ign_geopla_region"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="simplif_dept_Type" name="pg:ign_geopla_dep"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="simplif_dept_Type" name="pg:simplif_dept"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="simplif_france_Type" name="pg:simplif_france">
-          <attribute dataType="Number" featureTypeName="pg:simplif_france" name="id_geofla" keyType="pg:simplif_france" title="id_geofla"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="code_dept" keyType="pg:simplif_france" title="code_dept"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="nom_dept" keyType="pg:simplif_france" title="nom_dept"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="code_chf" keyType="pg:simplif_france" title="code_chf"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="nom_chf" keyType="pg:simplif_france" title="nom_chf"/>
-          <attribute dataType="Number" featureTypeName="pg:simplif_france" name="x_chf_lieu" keyType="pg:simplif_france" title="x_chf_lieu"/>
-          <attribute dataType="Number" featureTypeName="pg:simplif_france" name="y_chf_lieu" keyType="pg:simplif_france" title="y_chf_lieu"/>
-          <attribute dataType="Number" featureTypeName="pg:simplif_france" name="x_centroid" keyType="pg:simplif_france" title="x_centroid"/>
-          <attribute dataType="Number" featureTypeName="pg:simplif_france" name="y_centroid" keyType="pg:simplif_france" title="y_centroid"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="code_reg" keyType="pg:simplif_france" title="code_reg"/>
-          <attribute dataType="String" featureTypeName="pg:simplif_france" name="nom_region" keyType="pg:simplif_france" title="nom_region"/>
-          <attribute featureTypeName="pg:simplif_france" dataType="Geometry" name="the_geom" keyType="pg:simplif_france" projectionSRS="EPSG:2154" title="the_geom"/>
-        </category>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="simplif_france_Type" name="pg:ign_geopla_france"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="velov_Type" name="topp:velov"/>
-        <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="world_borders" name="topp:world_borders">
-          <attribute featureTypeName="topp:world_borders" dataType="Geometry" name="the_geom" keyType="topp:world_borders" projectionSRS="EPSG:4326" title="the_geom"/>
-          <attribute dataType="Number" featureTypeName="topp:world_borders" name="CAT" keyType="topp:world_borders" title="CAT"/>
-          <attribute dataType="String" featureTypeName="topp:world_borders" name="FIPS_CNTRY" keyType="topp:world_borders" title="FIPS_CNTRY"/>
-          <attribute dataType="String" featureTypeName="topp:world_borders" name="CNTRY_NAME" keyType="topp:world_borders" title="CNTRY_NAME"/>
-          <attribute dataType="Number" featureTypeName="topp:world_borders" name="AREA" keyType="topp:world_borders" title="AREA"/>
-          <attribute dataType="Number" featureTypeName="topp:world_borders" name="POP_CNTRY" keyType="topp:world_borders" title="POP_CNTRY"/>
-        </category>
-      </hierarchy>
-    </attributeHierarchy>
-    <url>http://openscales.org/geoserver/wfs</url>
-  </WFSDataSource>
-  <MapTool name="MapTool">
+  <GraphTool name="GraphTool">
     <buttonRadius>3</buttonRadius>
     <children encoding="dynamic">
       <SimpleInteractiveVisualization name="visualization">
@@ -3594,12 +3496,12 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
         <axisFontSize>11</axisFontSize>
         <axisFontUnderline>false</axisFontUnderline>
         <dataBounds>
-          <xMax>180</xMax>
-          <xMin>-180</xMin>
-          <yMax>128.77358490566039</yMax>
-          <yMin>-128.77358490566039</yMin>
+          <xMax>107.69230769230768</xMax>
+          <xMin>-171.8681318681319</xMin>
+          <yMax>125.05494505494508</yMax>
+          <yMin>-74.94505494505495</yMin>
         </dataBounds>
-        <defaultMouseMode>InteractiveVisualization.PAN_MODE</defaultMouseMode>
+        <defaultMouseMode>InteractiveVisualization.SELECT_MODE_REPLACE</defaultMouseMode>
         <enableAutoZoomToExtent>false</enableAutoZoomToExtent>
         <enableAutoZoomXToNiceNumbers>false</enableAutoZoomXToNiceNumbers>
         <enableAutoZoomYToNiceNumbers>false</enableAutoZoomYToNiceNumbers>
@@ -3608,1466 +3510,146 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
         <gridLineAlpha>NaN</gridLineAlpha>
         <gridLineColor>NaN</gridLineColor>
         <gridLineThickness>NaN</gridLineThickness>
-        <includeNonSelectableLayersInAutoZoom>true</includeNonSelectableLayersInAutoZoom>
+        <includeNonSelectableLayersInAutoZoom>false</includeNonSelectableLayersInAutoZoom>
         <layers encoding="dynamic">
-          <PlotLayer name="wms21">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms20">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms19">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms18">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms17">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms16">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms15">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms14">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms13">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms12">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms11">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms10">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms9">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms8">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms7">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms6">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms5">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms4">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms3">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <PlotLayer name="wms2">
-            <isOverlay>false</isOverlay>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <WMSPlotter>
-                <displayMissingImage>false</displayMissingImage>
-                <gridSpacing>12</gridSpacing>
-                <keySet>
-                  <keyFilter encoding="dynamic"/>
-                </keySet>
-                <preferLowerQuality>false</preferLowerQuality>
-                <serviceName>NASA OnEarth</serviceName>
-                <srs>EPSG:4326</srs>
-                <styles/>
-              </WMSPlotter>
-            </plotter>
-            <selectionFilter encoding="dynamic"/>
-          </PlotLayer>
-          <SelectablePlotLayer name="plot7">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>13434624</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="USA Population" name="topp:states">
-                                <attribute featureTypeName="topp:states" dataType="Geometry" name="the_geom" keyType="topp:states" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>10066329</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>5</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot3">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>16711935</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Manhattan (NY) landmarks" name="tiger:poly_landmarks">
-                                <attribute featureTypeName="tiger:poly_landmarks" dataType="Geometry" name="the_geom" keyType="tiger:poly_landmarks" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>0</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot6">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>13434624</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:2154" title="simplif_france_Type" name="pg:simplif_france">
-                                <attribute featureTypeName="pg:simplif_france" dataType="Geometry" name="the_geom" keyType="pg:simplif_france" projectionSRS="EPSG:2154" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>65535</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>4</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
           <SelectablePlotLayer name="plot">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WeaveDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category name="Geometry Collections">
-                                <attribute dataType="Geometry" name="states"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>65280</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>2</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot4">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="Tasmania state boundaries" name="topp:tasmania_state_boundaries">
-                                <attribute featureTypeName="topp:tasmania_state_boundaries" dataType="Geometry" name="the_geom" keyType="topp:tasmania_state_boundaries" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>16711680</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>6</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot2">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="World rectangle" name="tiger:giant_polygon">
-                                <attribute featureTypeName="tiger:giant_polygon" dataType="Geometry" name="the_geom" keyType="tiger:giant_polygon" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>16711935</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot5">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="world_borders" name="topp:world_borders">
-                                <attribute featureTypeName="topp:world_borders" dataType="Geometry" name="the_geom" keyType="topp:world_borders" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>16776960</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="label">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryLabelPlotter>
-                <angle>
-                  <defaultValue>0</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </angle>
-                <bold>
-                  <defaultValue>false</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </bold>
-                <color>
-                  <defaultValue>16777215</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </color>
-                <font>
-                  <defaultValue>Sophia Nubian</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </font>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WFSDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="USA Population" name="topp:states">
-                                <attribute featureTypeName="topp:states" dataType="Geometry" name="the_geom" keyType="topp:states" projectionSRS="EPSG:4326" title="the_geom"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <hAlign>
-                  <defaultValue>center</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </hAlign>
-                <hideOverlappingText>true</hideOverlappingText>
-                <italic>
-                  <defaultValue>false</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </italic>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <size>
-                  <defaultValue>10</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </size>
-                <sortColumn encoding="dynamic"/>
-                <text encoding="dynamic">
-                  <ReferencedColumn>
-                    <dynamicColumnReference encoding="dynamic">
-                      <HierarchyColumnReference>
-                        <dataSourceName>WFSDataSource</dataSourceName>
-                        <hierarchyPath encoding="xml">
-                          <hierarchy>
-                            <category defaultSRS="urn:x-ogc:def:crs:EPSG:4326" title="USA Population" name="topp:states">
-                              <attribute dataType="String" featureTypeName="topp:states" name="STATE_NAME" keyType="topp:states" title="STATE_NAME"/>
-                            </category>
-                          </hierarchy>
-                        </hierarchyPath>
-                      </HierarchyColumnReference>
-                    </dynamicColumnReference>
-                  </ReferencedColumn>
-                </text>
-                <underline>
-                  <defaultValue>false</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </underline>
-                <vAlign>
-                  <defaultValue>center</defaultValue>
-                  <internalDynamicColumn encoding="dynamic"/>
-                </vAlign>
-                <xScreenOffset>0</xScreenOffset>
-                <yScreenOffset>0</yScreenOffset>
-              </GeometryLabelPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>true</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot8">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WeaveDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category name="Geometry Collections">
-                                <attribute dataType="Geometry" name="nhpn"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>0.3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>10066329</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot9">
-            <backgroundIsVisible>true</backgroundIsVisible>
-            <enableBitmapFilters>true</enableBitmapFilters>
-            <layerIsSelectable>false</layerIsSelectable>
-            <layerIsVisible>true</layerIsVisible>
-            <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>0.2</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>6710886</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WeaveDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category name="Geometry Collections">
-                                <attribute dataType="Geometry" name="world_borders"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
-                <keySet>
-                  <keyFilter encoding="dynamic">
-                    <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-                  </keyFilter>
-                </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>0.3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>10066329</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
-            </plotter>
-            <probeFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultProbeKeySet"/>
-            </probeFilter>
-            <selectionFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSelectionKeySet"/>
-            </selectionFilter>
-            <subsetFilter encoding="dynamic">
-              <GlobalObjectReference name="defaultSubsetKeyFilter"/>
-            </subsetFilter>
-            <useTextBitmapFilters>false</useTextBitmapFilters>
-          </SelectablePlotLayer>
-          <SelectablePlotLayer name="plot10">
             <backgroundIsVisible>true</backgroundIsVisible>
             <enableBitmapFilters>true</enableBitmapFilters>
             <layerIsSelectable>true</layerIsSelectable>
             <layerIsVisible>true</layerIsVisible>
             <plotter encoding="dynamic">
-              <GeometryPlotter>
-                <fill>
-                  <alpha>
-                    <defaultValue>1</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <color>
-                    <defaultValue>NaN</defaultValue>
-                    <internalDynamicColumn encoding="dynamic">
-                      <GlobalObjectReference name="defaultColorColumn"/>
-                    </internalDynamicColumn>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <enableMissingDataFillPattern>false</enableMissingDataFillPattern>
-                </fill>
-                <geometryColumn>
-                  <internalDynamicColumn encoding="dynamic">
-                    <ReferencedColumn>
-                      <dynamicColumnReference encoding="dynamic">
-                        <HierarchyColumnReference>
-                          <dataSourceName>WeaveDataSource</dataSourceName>
-                          <hierarchyPath encoding="xml">
-                            <hierarchy>
-                              <category name="Geometry Collections">
-                                <attribute dataType="Geometry" name="world_borders"/>
-                              </category>
-                            </hierarchy>
-                          </hierarchyPath>
-                        </HierarchyColumnReference>
-                      </dynamicColumnReference>
-                    </ReferencedColumn>
-                  </internalDynamicColumn>
-                  <projectionSRS>EPSG:4326</projectionSRS>
-                </geometryColumn>
+              <GraphPlotter>
+                <algorithmRunning>false</algorithmRunning>
+                <attractionConstant>0.23643180835073774</attractionConstant>
+                <colorColumn encoding="dynamic">
+                  <ReferencedColumn>
+                    <dynamicColumnReference encoding="dynamic">
+                      <HierarchyColumnReference>
+                        <dataSourceName>GNUTELLA08-NODES TRUNCATED</dataSourceName>
+                        <hierarchyPath encoding="xml">
+                          <hierarchy>
+                            <attribute csvColumn="Node ID" title="Node ID" keyType="GNUTELLA08-NODES TRUNCATED"/>
+                          </hierarchy>
+                        </hierarchyPath>
+                      </HierarchyColumnReference>
+                    </dynamicColumnReference>
+                  </ReferencedColumn>
+                </colorColumn>
+                <currentAlgorithm>Force Directed</currentAlgorithm>
+                <dampingConstant>0.5</dampingConstant>
+                <drawIncrement>1</drawIncrement>
+                <edgeSourceColumn encoding="dynamic">
+                  <ReferencedColumn>
+                    <dynamicColumnReference encoding="dynamic">
+                      <HierarchyColumnReference>
+                        <dataSourceName>GNUTELLA08-EDGES TRUNCATED</dataSourceName>
+                        <hierarchyPath encoding="xml">
+                          <hierarchy>
+                            <attribute csvColumn="From" title="From" keyType="GNUTELLA08-EDGES TRUNCATED"/>
+                          </hierarchy>
+                        </hierarchyPath>
+                      </HierarchyColumnReference>
+                    </dynamicColumnReference>
+                  </ReferencedColumn>
+                </edgeSourceColumn>
+                <edgeTargetColumn encoding="dynamic">
+                  <ReferencedColumn>
+                    <dynamicColumnReference encoding="dynamic">
+                      <HierarchyColumnReference>
+                        <dataSourceName>GNUTELLA08-EDGES TRUNCATED</dataSourceName>
+                        <hierarchyPath encoding="xml">
+                          <hierarchy>
+                            <attribute csvColumn="To" title="To" keyType="GNUTELLA08-EDGES TRUNCATED"/>
+                          </hierarchy>
+                        </hierarchyPath>
+                      </HierarchyColumnReference>
+                    </dynamicColumnReference>
+                  </ReferencedColumn>
+                </edgeTargetColumn>
+                <fillStyle encoding="dynamic">
+                  <SolidFillStyle>
+                    <alpha>
+                      <defaultValue>1</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </alpha>
+                    <color>
+                      <defaultValue>NaN</defaultValue>
+                      <internalDynamicColumn encoding="dynamic">
+                        <GlobalObjectReference name="defaultColorColumn"/>
+                      </internalDynamicColumn>
+                    </color>
+                    <enabled>
+                      <defaultValue>true</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </enabled>
+                  </SolidFillStyle>
+                </fillStyle>
                 <keySet>
                   <keyFilter encoding="dynamic">
                     <GlobalObjectReference name="defaultSubsetKeyFilter"/>
                   </keyFilter>
                 </keySet>
-                <line>
-                  <alpha>
-                    <defaultValue>0.9</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </alpha>
-                  <caps>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </caps>
-                  <color>
-                    <defaultValue>16777215</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </color>
-                  <enabled>
-                    <defaultValue>true</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </enabled>
-                  <joints>
-                    <defaultValue/>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </joints>
-                  <miterLimit>
-                    <defaultValue>3</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </miterLimit>
-                  <pixelHinting>
-                    <defaultValue>false</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </pixelHinting>
-                  <scaleMode>
-                    <defaultValue>none</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </scaleMode>
-                  <weight>
-                    <defaultValue>8</defaultValue>
-                    <internalDynamicColumn encoding="dynamic"/>
-                  </weight>
-                </line>
-                <pixellation>1</pixellation>
-                <pointShapeSize>5</pointShapeSize>
-              </GeometryPlotter>
+                <lineStyle encoding="dynamic">
+                  <SolidLineStyle>
+                    <alpha>
+                      <defaultValue>0.5</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </alpha>
+                    <caps>
+                      <defaultValue/>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </caps>
+                    <color>
+                      <defaultValue>0</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </color>
+                    <enabled>
+                      <defaultValue>true</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </enabled>
+                    <joints>
+                      <defaultValue/>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </joints>
+                    <miterLimit>
+                      <defaultValue>3</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </miterLimit>
+                    <pixelHinting>
+                      <defaultValue>false</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </pixelHinting>
+                    <scaleMode>
+                      <defaultValue>normal</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </scaleMode>
+                    <weight>
+                      <defaultValue>1</defaultValue>
+                      <internalDynamicColumn encoding="dynamic"/>
+                    </weight>
+                  </SolidLineStyle>
+                </lineStyle>
+                <maxIterations>50</maxIterations>
+                <minimumEnergy>0.0001</minimumEnergy>
+                <nodesColumn encoding="dynamic">
+                  <ReferencedColumn>
+                    <dynamicColumnReference encoding="dynamic">
+                      <HierarchyColumnReference>
+                        <dataSourceName>GNUTELLA08-NODES TRUNCATED</dataSourceName>
+                        <hierarchyPath encoding="xml">
+                          <hierarchy>
+                            <attribute csvColumn="Node ID" title="Node ID" keyType="GNUTELLA08-NODES TRUNCATED"/>
+                          </hierarchy>
+                        </hierarchyPath>
+                      </HierarchyColumnReference>
+                    </dynamicColumnReference>
+                  </ReferencedColumn>
+                </nodesColumn>
+                <radius>2</radius>
+                <repulsionConstant>17.88908765652952</repulsionConstant>
+                <shouldStop>false</shouldStop>
+                <sizeColumn encoding="dynamic"/>
+              </GraphPlotter>
             </plotter>
             <probeFilter encoding="dynamic">
               <GlobalObjectReference name="defaultProbeKeySet"/>
@@ -5093,11 +3675,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
     </children>
     <closeable>true</closeable>
     <draggable>true</draggable>
-    <enableBackground>true</enableBackground>
     <enableBorders>true</enableBorders>
     <enableControlPanel>true</enableControlPanel>
     <enableHelpPanel>true</enableHelpPanel>
-    <enableOverview>false</enableOverview>
     <includeToolAttributesInProbe>true</includeToolAttributesInProbe>
     <maximizable>true</maximizable>
     <maximized>true</maximized>
@@ -5105,18 +3685,17 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
     <minimized>false</minimized>
     <panelBackgroundColor>NaN</panelBackgroundColor>
     <panelBorderColor>NaN</panelBorderColor>
-    <panelHeight>49.679%</panelHeight>
+    <panelHeight>53.105%</panelHeight>
     <panelStyleList/>
-    <panelWidth>50.157%</panelWidth>
-    <panelX>0%</panelX>
-    <panelY>35.546%</panelY>
+    <panelWidth>52.038%</panelWidth>
+    <panelX>0.31348%</panelX>
+    <panelY>46.681%</panelY>
     <pinnable>true</pinnable>
     <pinnableToBack>false</pinnableToBack>
     <pinned>false</pinned>
     <pinnedToBack>false</pinnedToBack>
-    <projectionSRS>EPSG:4326</projectionSRS>
     <resizeable>true</resizeable>
     <showCloseDialog>false</showCloseDialog>
     <toolTitle/>
-  </MapTool>
+  </GraphTool>
 </Weave>

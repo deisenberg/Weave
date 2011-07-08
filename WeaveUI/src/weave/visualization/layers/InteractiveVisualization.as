@@ -70,6 +70,7 @@ package weave.visualization.layers
 			doubleClickEnabled = true;
 			
 			enableZoomAndPan.value = true;
+			enableSelection.value = true;
 			enableAutoZoomToExtent.value = true;
 			// adding a canvas as child gets the selection rectangle on top of the vis
 			addChild(selectionRectangleCanvas);
@@ -136,6 +137,7 @@ package weave.visualization.layers
 		}
 		
 		public const enableZoomAndPan:LinkableBoolean = newLinkableChild(this, LinkableBoolean);
+		public const enableSelection:LinkableBoolean = newLinkableChild(this, LinkableBoolean);
 		
 		protected var activeKeyType:String = null;
 		protected var mouseDragActive:Boolean = false;
@@ -493,7 +495,7 @@ package weave.visualization.layers
 		{
 			var mouseMode:String = _temporaryMouseMode ? _temporaryMouseMode : defaultMouseMode.value;
 			 
-			if(!Weave.properties.enableToolSelection.value) return;
+			if (!Weave.properties.enableToolSelection.value || !enableSelection.value) return;
 			var g:Graphics = selectionRectangleCanvas.graphics;
 			if (!_selectionRectangleGraphicsCleared)
 				g.clear(); 
@@ -717,7 +719,7 @@ package weave.visualization.layers
 		
 		protected function setSelectionKeys(layer:SelectablePlotLayer, keys:Array, useMouseMode:Boolean = false):void
 		{
-			if (!Weave.properties.enableToolSelection.value)
+			if (!Weave.properties.enableToolSelection.value || !enableSelection.value)
 				return;
 
 			var mouseMode:String = _temporaryMouseMode ? _temporaryMouseMode : defaultMouseMode.value;

@@ -34,6 +34,7 @@ package weave.visualization.plotters
 	import weave.Weave;
 	import weave.api.data.IAttributeColumn;
 	import weave.api.data.IFilteredKeySet;
+	import weave.api.data.IKeySet;
 	import weave.api.data.IQualifiedKey;
 	import weave.api.getCallbackCollection;
 	import weave.api.primitives.IBounds2D;
@@ -109,6 +110,21 @@ package weave.visualization.plotters
 			{
 				ErrorManager.reportError(e);
 			}
+		}
+		
+		public function updateDraggedKeys(keys:Array, dx:Number, dy:Number):void
+		{
+			for each (var key:IQualifiedKey in keys)
+			{
+				var node:GraphNode = _keyToNode[key];
+				if (!node)
+					continue;
+				node.position.x += dx;
+				node.position.y += dy;
+			}
+			setOutputBounds();
+			_spatialCallbacks.triggerCallbacks();
+			getCallbackCollection(this).triggerCallbacks();
 		}
 		
 		/**
@@ -340,16 +356,8 @@ package weave.visualization.plotters
 					newEdge.source = source;
 					newEdge.target = target;
 					_edges.push(newEdge);
-					
 					source.addConnection(target);
 					target.addConnection(source);
-					/*var connectedNodes:Array = _idToConnectedNodes[source.id] || [];
-					connectedNodes.push(target);
-					_idToConnectedNodes[source.id] = connectedNodes;
-					
-					connectedNodes = _idToConnectedNodes[target.id] || [];
-					connectedNodes.push(source);
-					_idToConnectedNodes[target.id] = connectedNodes;*/
 				}
 			}
 		}
@@ -357,13 +365,13 @@ package weave.visualization.plotters
 		/**
 		 * Set all of the positions to random values and zero the velocities.
 		 */
-		private function resetAllNodes():void
+		public function resetAllNodes():void
 		{
 			var i:int = 0;
 			var length:int = 0;
 			for each (var obj:* in _keyToNode) { ++length; }
 			
-			_allowedBounds.setBounds(-100, -100, 100, 100);
+			outputBounds.reset();
 			var spacing:Number = 2 * Math.PI / (length + 1);
 			var angle:Number = 0;
 			var xMax:Number = _allowedBounds.getXMax();
@@ -385,6 +393,9 @@ package weave.visualization.plotters
 				node.velocity.x = 0;
 				node.velocity.y = 0;
 			}
+			
+			_spatialCallbacks.triggerCallbacks();
+			getCallbackCollection(this).triggerCallbacks();
 		}
 		
 		private function handleColumnsChange():void
@@ -408,7 +419,9 @@ package weave.visualization.plotters
 			setupData();
 
 			resetAllNodes();
-			//recomputePositions();
+			
+			repulsionConstant.value = (100*100) / _numNodes;
+			attractionConstant.value = 1 / Math.sqrt(repulsionConstant.value);
 		}
 		
 		/**
@@ -436,13 +449,18 @@ package weave.visualization.plotters
 			var distanceSq:Number = dx2 + dy2;
 			var distance:Number = Math.sqrt(distanceSq);
 			var forceMagnitude:Number = distance * attractionConstant.value; 
-			
-			var forceX:Number = forceMagnitude * dx / distance;
-			var forceY:Number = forceMagnitude * dy / distance;
-			if (isNaN(forceX))
+			var forceX:Number;
+			var forceY:Number;
+			if (distance > 1)
+			{
+				forceX = forceMagnitude * dx / distance;
+				forceY = forceMagnitude * dy / distance;
+			}
+			else
+			{
 				forceX = 0;
-			if (isNaN(forceY))
 				forceY = 0;
+			}
 			output.x = forceX;
 			output.y = forceY;
 			return output; 
@@ -460,17 +478,21 @@ package weave.visualization.plotters
 			var dx2:Number = dx * dx;
 			var dy2:Number = dy * dy;			
 			var resultantVectorMagnitude:Number = dx2 + dy2;
-			if (resultantVectorMagnitude < 1)
-				resultantVectorMagnitude = 1;
 			var distance:Number = Math.sqrt(resultantVectorMagnitude);
-  			var forceMagnitude:Number = repulsionConstant.value / resultantVectorMagnitude; 
-			
-			var forceX:Number = forceMagnitude * dx / distance;
-			var forceY:Number = forceMagnitude * dy / distance;
-			if (isNaN(forceX))
-				forceX = 0;
-			if (isNaN(forceY))
-				forceY = 0;
+  			var forceMagnitude:Number;
+			var forceX:Number;
+			var forceY:Number;
+			if (distance > 1)
+			{
+				forceMagnitude = repulsionConstant.value / resultantVectorMagnitude;
+				forceX = forceMagnitude * dx / distance;
+				forceY = forceMagnitude * dy / distance;
+			}
+			else
+			{
+				forceX = repulsionConstant.value;
+				forceY = repulsionConstant.value;
+			}
 			output.x = forceX;
 			output.y = forceY;
 			return output;
@@ -497,13 +519,12 @@ package weave.visualization.plotters
 			
 			DebugTimer.begin();
 			
-			repulsionConstant.value = (100*100) / _numNodes;
-			attractionConstant.value = 1 / Math.sqrt(repulsionConstant.value);
+
 			algorithmRunning.value = true;
 			var currentNode:GraphNode;
 			var reachedEquilibrium:Boolean = false;
 			var kineticEnergy:Number = 0;
-			
+			var key:IQualifiedKey;
 			_nextIncrement += (_nextIncrement == _iterations) ? drawIncrement.value : 0;
 			for (; _iterations < maxIterations.value; ++_iterations)
 			{
@@ -515,12 +536,10 @@ package weave.visualization.plotters
 					return;
 				}
 				outputBounds.reset();
-				//_allowedBounds.reset();
 				for each (var obj:Object in keys)
 				{
-					var key:IQualifiedKey = obj as IQualifiedKey;
+					key = obj as IQualifiedKey;
 					currentNode = _keyToNode[key];
-					//_allowedBounds.includePoint(currentNode.position);
 					netForce.x = 0;
 					netForce.y = 0;
 					
@@ -533,8 +552,6 @@ package weave.visualization.plotters
 							continue;
 						
 						var tempAttraction:Point = hookeAttraction(currentNode, connectedNode, tempPoint);
-						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
-							trace('NaN Hooke');
 						netForce.x += tempAttraction.x;
 						netForce.y += tempAttraction.y;
 					}
@@ -549,8 +566,6 @@ package weave.visualization.plotters
 							continue;
 						
 						var tempRepulsion:Point = coulumbRepulsion(currentNode, otherNode, tempPoint);
-						if (isNaN(tempPoint.x) || isNaN(tempPoint.y))
-							trace('NaN Repulsion');
 						netForce.x += tempRepulsion.x;
 						netForce.y += tempRepulsion.y;
 					}
@@ -571,15 +586,15 @@ package weave.visualization.plotters
 				var xSum:Number = 0;
 				var ySum:Number = 0;
 				kineticEnergy = 0;
-				for each (currentNode in _keyToNode)
+				for each (key in keys)
 				{
+					currentNode = _keyToNode[key];
 					var p1:Point = currentNode.position;
 					var p2:Point = currentNode.nextPosition;
 					kineticEnergy += ComputationalGeometryUtils.getDistanceFromPoint(p1.x, p1.y, p2.x, p2.y);
 					p1.x = p2.x;
 					p1.y = p2.y;
 				}
-				//trace(kineticEnergy);
 
 				// if we've gone over the number of drawing iterations
 				if (_iterations >= _nextIncrement)

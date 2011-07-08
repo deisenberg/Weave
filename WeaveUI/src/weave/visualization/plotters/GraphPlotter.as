@@ -61,7 +61,7 @@ package weave.visualization.plotters
 	import weave.visualization.plotters.styles.SolidLineStyle;
 	
 	/**
-	 * This is a plotter for a node edge chart, commonly referred to as a Graph.
+	 * This is a plotter for a node edge chart, commonly referred to as a graph.
 	 * This plotter has different layout algorithms, each with the ability to stop,
 	 * continue, and restart.
 	 * 
@@ -137,7 +137,9 @@ package weave.visualization.plotters
 			}
 		}
 		
-		
+		/**
+		 * Verify the algorithm string is correct and use the corresponding function.
+		 */
 		private function changeAlgorithm():void
 		{
 			var newAlgorithm:Function = algorithms[currentAlgorithm.value];
@@ -148,11 +150,9 @@ package weave.visualization.plotters
 		}
 		
 		// the graph's specification
-		// TODO change these to use QKeys instead
 		private var _edges:Array = []; // Array of GraphEdges
-		private var _keyToNode:Dictionary;
-		private var _numNodes:int = 0;
-		//private var _keyToConnectedNodes:Object = []; // IQualifiedKey-> Array (of GraphNode objects)
+		private var _keyToNode:Dictionary; // IQualifiedKey -> GraphNode
+		private var _numNodes:int = 0; // the number of nodes in _keyToNode
 		private const _allowedBounds:IBounds2D = new Bounds2D(-100, -100, 100, 100);
 		
 		// styles
@@ -160,8 +160,8 @@ package weave.visualization.plotters
 		public const fillStyle:DynamicFillStyle = newNonSpatialProperty(DynamicFillStyle);
 
 		// the columns
-		public var colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
-		public var sizeColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
+		public const colorColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
+		public const sizeColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn());
 		public const nodesColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const edgeSourceColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
 		public const edgeTargetColumn:DynamicColumn = registerSpatialProperty(new DynamicColumn(), handleColumnsChange);
@@ -174,6 +174,7 @@ package weave.visualization.plotters
 		private static const FADE:String = "FADE";
 		private static const GRIP:String = "Intelligent Placement";
 		
+		// properties
 		public const radius:LinkableNumber = registerSpatialProperty(new LinkableNumber(2)); // radius of the circles
 		public const minimumEnergy:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // if less than this, close enough
 		public const attractionConstant:LinkableNumber = registerNonSpatialProperty(new LinkableNumber(0.1)); // made up spring constant in hooke's law
@@ -191,9 +192,6 @@ package weave.visualization.plotters
 
 		private function grip(keys:Array = null):void { }
 		
-		private var _iterations:int = 0;
-		private var _nextIncrement:int = 0;
-		private const edgesShape:Shape = new Shape();
 		override public function drawPlot(recordKeys:Array, dataBounds:IBounds2D, screenBounds:IBounds2D, destination:BitmapData):void
 		{
 			if (recordKeys.length == 0)
@@ -493,6 +491,7 @@ package weave.visualization.plotters
 				shouldStop.value = false;
 				algorithmRunning.value = false;
 				_spatialCallbacks.triggerCallbacks();
+				_iterations = maxIterations.value;
 				return;
 			}
 			
@@ -625,10 +624,16 @@ package weave.visualization.plotters
 			}
 			outputBounds.centeredResize(1.25 * outputBounds.getWidth(), 1.25 * outputBounds.getHeight());
 		}
+
+		// the iterations
+		private var _iterations:int = 0;
+		private var _nextIncrement:int = 0;
+
 		
 		// reusable objects
 		private const netForce:Point = new Point(); // the force vector
 		private const tempPoint:Point = new Point(); // temp point used for computing force 
 		private var outputBounds:IBounds2D = new Bounds2D(); 
+		private const edgesShape:Shape = new Shape(); 
 	}
 }

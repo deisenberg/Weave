@@ -81,6 +81,7 @@
 				CustomContextMenuManager.createAndAddMenuItemToDestination('Force Direct Selection', this, handleForceDirectSelection);
 				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 25 More Iterations', this, handle25MoreIterations);
 				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 100 More Iterations', this, handle100MoreIterations);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Stop Positioning Algorithm', this, handleStopComputation);
 			}
 			private function handle25MoreIterations(event:ContextMenuEvent):void
 			{
@@ -158,7 +159,7 @@
 				_plotter.shouldStop.value = false;
 				_plotter.recomputePositions();
 			}
-			private function handleStopComputation():void
+			private function handleStopComputation(event:ContextMenuEvent = null):void
 			{
 				shouldStop = true;
 				algorithmRunning = false;

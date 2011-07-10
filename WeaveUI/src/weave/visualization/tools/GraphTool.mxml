@@ -36,6 +36,7 @@
 			import weave.Weave;
 			import weave.api.data.IAttributeColumn;
 			import weave.api.data.IKeySet;
+			import weave.api.data.IQualifiedKey;
 			import weave.api.getCallbackCollection;
 			import weave.api.linkBindableProperty;
 			import weave.api.newLinkableChild;
@@ -90,59 +91,12 @@
 				
 				addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
-				//addEventListener(KeyboardEvent.KEY_DOWN, handleKeyDown);
-				//addEventListener(KeyboardEvent.KEY_UP, handleKeyUp);
-			}
-			private function handleKeyDown(event:KeyboardEvent):void
-			{
-				if (event.keyCode == Keyboard.CONTROL)
-					visualization.enableSelection.value = true;
-			}
-			private function handleKeyUp(event:KeyboardEvent):void
-			{
-				visualization.enableSelection.value = false;
 			}
 			
-			private var _mouseDown:Boolean = false;
 			private var _isDragging:Boolean = false;
 			private var _probedKeys:Array = null;
+			private var _probedKey:IQualifiedKey = null;
 			private const _dragSourcePoint:Point = new Point();
-
-			private function projectGlobalToScreen(x:Number, y:Number):Point
-			{
-				_tempPoint.x = x;
-				_tempPoint.y = y;
-				return visualization.globalToLocal(_tempPoint);
-			}
-			private function projectScreenPointToData(p:Point):Point
-			{
-				var dataBounds:IBounds2D = getDataBounds();
-				var screenBounds:IBounds2D = getScreenBounds();
-				screenBounds.projectPointTo(p, dataBounds);
-				return p;
-			}
-			private function getDataBounds():IBounds2D
-			{
-				visualization.dataBounds.copyTo(_dataBounds);
-				return _dataBounds;
-			}
-			private function getScreenBounds():IBounds2D
-			{
-				var screenRectangle:Rectangle = visualization.screen;
-				_screenBounds.setBounds(screenRectangle.left, screenRectangle.bottom, screenRectangle.right, screenRectangle.top);
-				return _screenBounds;
-			}
-			private function projectBoundsToData(b:IBounds2D):IBounds2D
-			{
-				var dataBounds:IBounds2D = getDataBounds();
-				var screenBounds:IBounds2D = getScreenBounds();
-				screenBounds.projectCoordsTo(_tempBounds, dataBounds);
-				return _tempBounds;
-			}
-			private const _screenBounds:IBounds2D = new Bounds2D();
-			private const _dataBounds:IBounds2D = new Bounds2D();
-			private const _tempBounds:IBounds2D = new Bounds2D();
-			private const _tempPoint:Point = new Point();
 			private function handleMouseDown(event:MouseEvent):void
 			{
 				var ctrlKey:Boolean = StageUtils.ctrlKey;
@@ -150,20 +104,19 @@
 				visualization.enableSelection.value = ctrlKey || shiftKey;
 				if (ctrlKey || shiftKey)
 					return;
-				var screenPoint:Point = projectGlobalToScreen(event.stageX, event.stageY);
-				_tempBounds.reset();
-				_tempBounds.setCenter(screenPoint.x, screenPoint.y);
-				_tempBounds.centeredResize(100, 100);
-
-				var queryBounds:IBounds2D = projectBoundsToData(_tempBounds);
-				var probedKeys:Array = (plotLayer.spatialIndex as SpatialIndex).getKeysBoundingBoxOverlap(queryBounds, 0);
-				if (probedKeys == null || probedKeys.length == 0)
+				var probedKey:IQualifiedKey = visualization.lastProbedKey;
+				if (!probedKey)
 					return;
-				// there is a probed key, so perform the dragging
+
+				var boundsArray:Array = _plotter.getDataBoundsFromRecordKey(probedKey);
+				if (!boundsArray || boundsArray.length == 0)
+					return;
+				var bounds:IBounds2D = boundsArray[0];
+				_dragSourcePoint.x = bounds.getXCenter();
+				_dragSourcePoint.y = bounds.getYCenter();
+				//_probedKeys =
+				_probedKey = probedKey;
 				_isDragging = true;
-				_probedKeys = probedKeys;
-				_dragSourcePoint.x = queryBounds.getXCenter();
-				_dragSourcePoint.y = queryBounds.getYCenter();
 			}
 			private function handleMouseUp(event:MouseEvent):void
 			{
@@ -172,14 +125,9 @@
 					return;
 				// we are dragging, so update the dragged keys
 				_isDragging = false;
-				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
-				var selectedKeys:Array = keySet.keys;
 				var keys:Array;
-				if (selectedKeys == null)
-					keys = [ _probedKeys ];
-				else 
-					keys = selectedKeys.concat(_probedKeys);
-				
+				keys = [ _probedKey ];
+								
 				var screenPoint:Point = projectGlobalToScreen(event.stageX, event.stageY);
 				var dataPoint:Point = projectScreenPointToData(screenPoint);
 				var dx:Number = dataPoint.x - _dragSourcePoint.x;
@@ -294,6 +242,48 @@
 				algorithmRunning = _plotter.algorithmRunning.value;
 				shouldStop = !algorithmRunning;					
 			}
+
+			
+			
+			/********************************************
+			 * utility functions and temporary objects  *
+			 ********************************************/
+			
+			private function projectGlobalToScreen(x:Number, y:Number):Point
+			{
+				_tempPoint.x = x;
+				_tempPoint.y = y;
+				return visualization.globalToLocal(_tempPoint);
+			}
+			private function projectScreenPointToData(p:Point):Point
+			{
+				var dataBounds:IBounds2D = getDataBounds();
+				var screenBounds:IBounds2D = getScreenBounds();
+				screenBounds.projectPointTo(p, dataBounds);
+				return p;
+			}
+			private function getDataBounds():IBounds2D
+			{
+				plotLayer.getDataBounds(_dataBounds);
+				return _dataBounds;
+			}
+			private function getScreenBounds():IBounds2D
+			{
+				plotLayer.getScreenBounds(_screenBounds);
+				return _screenBounds;
+			}
+			private function projectBoundsToData(b:IBounds2D):IBounds2D
+			{
+				var dataBounds:IBounds2D = getDataBounds();
+				var screenBounds:IBounds2D = getScreenBounds();
+				screenBounds.projectCoordsTo(b, dataBounds);
+				return _tempBounds;
+			}
+
+			private const _screenBounds:IBounds2D = new Bounds2D();
+			private const _dataBounds:IBounds2D = new Bounds2D();
+			private const _tempBounds:IBounds2D = new Bounds2D();
+			private const _tempPoint:Point = new Point();
 		]]>
 	</mx:Script>
 	

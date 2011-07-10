@@ -614,7 +614,7 @@ package weave.visualization.layers
 				if (!layer.layerIsVisible.value || !layer.layerIsSelectable.value)
 					continue;
 				// skip this layer if it does not contain lastProbedQKey
-				if (lastProbedQKey && !layer.plotter.keySet.containsKey(lastProbedQKey))
+				if (_lastProbedQKey && !layer.plotter.keySet.containsKey(_lastProbedQKey))
 					continue;
 
 				// when using the selection layer, clear the probe
@@ -639,10 +639,12 @@ package weave.visualization.layers
 			}
 		}
 		
+		public function get lastProbedKey():IQualifiedKey { return _lastProbedQKey; }
+		
 		/**
 		 * This is the last IQualifiedKey (record identifier) that was probed.
 		 */
-		private var lastProbedQKey:IQualifiedKey = null;
+		private var _lastProbedQKey:IQualifiedKey = null;
 		
 		protected function handleProbe(allowCallLater:Boolean = true):void
 		{
@@ -704,7 +706,7 @@ package weave.visualization.layers
 					if (keys.length > 0)
 					{
 						setProbeKeys(layer, keys);
-						lastProbedQKey = keys[0] as IQualifiedKey;
+						_lastProbedQKey = keys[0] as IQualifiedKey;
 						
 						return;
 					}
@@ -713,7 +715,7 @@ package weave.visualization.layers
 				// NOTE: this code is hacked to work with only one global probe KeySet
 				if (lastActiveLayer)
 					setProbeKeys(lastActiveLayer, []);
-				lastProbedQKey = null;
+				_lastProbedQKey = null;
 			}
 		}
 		

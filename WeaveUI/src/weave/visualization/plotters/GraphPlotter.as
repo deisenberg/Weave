@@ -550,7 +550,7 @@ package weave.visualization.plotters
 				shouldStop.value = false;
 				algorithmRunning.value = false;
 				_spatialCallbacks.triggerCallbacks();
-				_iterations = maxIterations.value;
+				_iterations = 0;
 				return;
 			}
 			
@@ -661,6 +661,7 @@ package weave.visualization.plotters
 			getCallbackCollection(this).triggerCallbacks();
 			
 			algorithmRunning.value = false;
+			_iterations = 0;
 			DebugTimer.end();
 		}
 		

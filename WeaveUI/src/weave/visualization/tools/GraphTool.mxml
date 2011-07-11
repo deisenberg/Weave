@@ -104,7 +104,7 @@
 			/***********************************************************
 			 * the event listeners for MouseEvents                     *
 			 ***********************************************************/
-						private var _isDragging:Boolean = false;
+			private var _isDragging:Boolean = false;
 			private var _probedKeys:Array = [];
 			private var _probedKey:IQualifiedKey = null;
 			private const _dragSourcePoint:Point = new Point();

@@ -263,8 +263,8 @@ package weave.visualization.plotters
 			{
 				var node:GraphNode = _keyToNode[key];
 				var connections:Vector.<GraphNode> = node.connections;
-				if (connections == null || connections.length == 0)
-					continue;
+//				if (connections == null || connections.length == 0)
+//					continue;
 				
 				// set the styles
 				lineStyle.beginLineStyle(key, nodesGraphics);				
@@ -282,7 +282,7 @@ package weave.visualization.plotters
 				
 				for each (var connectedNode:GraphNode in connections)
 				{
-					if (fullyDrawnNodes[connectedNode] == undefined)
+					if (fullyDrawnNodes[connectedNode] != undefined)
 					{						
 						edgesGraphics.moveTo(xNode, yNode);
 						x = connectedNode.position.x;

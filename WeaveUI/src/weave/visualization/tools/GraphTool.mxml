@@ -88,14 +88,23 @@
 				(edgeSourceComponent as DynamicColumnComponent).dynamicObject = edgeSourceColumn;
 				(edgeTargetComponent as DynamicColumnComponent).dynamicObject = edgeTargetColumn;
 				
-				setupContextMenu();
-				
+				this.contextMenu = new ContextMenu();
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Force Direct Selection', this, handleForceDirectSelection);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 25 More Iterations', this, handle25MoreIterations);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 100 More Iterations', this, handle100MoreIterations);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Stop Positioning Algorithm', this, handleStopComputation);
+				CustomContextMenuManager.createAndAddMenuItemToDestination('Reset Positions', this, handleResetPositions);
+							
 				addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
 				addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
 			}
 			
-			private var _isDragging:Boolean = false;
+
+			/***********************************************************
+			 * the event listeners for MouseEvents                     *
+			 ***********************************************************/
+						private var _isDragging:Boolean = false;
 			private var _probedKeys:Array = [];
 			private var _probedKey:IQualifiedKey = null;
 			private const _dragSourcePoint:Point = new Point();
@@ -129,10 +138,8 @@
 					return;
 				var bounds:IBounds2D = boundsArray[0];
 				
-				//_probedKeys = visualization.lastSelectedKeys;
 				if (_probedKeys.indexOf(probedKey) < 0)
 					_probedKeys.push(probedKey);
-				trace(_probedKeys.length);
 				
 				_dragSourcePoint.x = bounds.getXCenter();
 				_dragSourcePoint.y = bounds.getYCenter();
@@ -157,15 +164,7 @@
 				var dy:Number = dataPoint.y - _dragSourcePoint.y;
 				_plotter.updateDraggedKeys(_probedKeys, dx, dy);				
 			}
-			private function setupContextMenu():void
-			{
-				this.contextMenu = new ContextMenu();
-				CustomContextMenuManager.createAndAddMenuItemToDestination('Force Direct Selection', this, handleForceDirectSelection);
-				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 25 More Iterations', this, handle25MoreIterations);
-				CustomContextMenuManager.createAndAddMenuItemToDestination('Perform 100 More Iterations', this, handle100MoreIterations);
-				CustomContextMenuManager.createAndAddMenuItemToDestination('Stop Positioning Algorithm', this, handleStopComputation);
-				CustomContextMenuManager.createAndAddMenuItemToDestination('Reset Positions', this, handleResetPositions);
-			}
+
 			private function handle25MoreIterations(event:ContextMenuEvent):void
 			{
 				_plotter.maxIterations.value += 25;

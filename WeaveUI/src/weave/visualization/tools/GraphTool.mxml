@@ -19,7 +19,8 @@
     along with Weave.  If not, see <http://www.gnu.org/licenses/>.
 */
 -->
-<!-- I apologize to those who must maintain or modify this code... 
+<!-- 
+	I apologize to those who must maintain or modify this code... 
 	@author kmonico
 -->
 
@@ -91,48 +92,70 @@
 				
 				addEventListener(MouseEvent.MOUSE_DOWN, handleMouseDown);
 				addEventListener(MouseEvent.MOUSE_UP, handleMouseUp);
+				addEventListener(MouseEvent.MOUSE_MOVE, handleMouseMove);
 			}
 			
 			private var _isDragging:Boolean = false;
-			private var _probedKeys:Array = null;
+			private var _probedKeys:Array = [];
 			private var _probedKey:IQualifiedKey = null;
 			private const _dragSourcePoint:Point = new Point();
+			private function handleMouseMove(event:MouseEvent):void
+			{
+				if (!_isDragging)
+					return;
+
+				var screenPoint:Point = projectGlobalToScreen(event.stageX, event.stageY);
+				var dataPoint:Point = projectScreenPointToData(screenPoint);
+				var dx:Number = dataPoint.x - _dragSourcePoint.x;
+				var dy:Number = dataPoint.y - _dragSourcePoint.y;
+				_plotter.updateDraggedKeys(_probedKeys, dx, dy);
+				_dragSourcePoint.x = dataPoint.x;
+				_dragSourcePoint.y = dataPoint.y;
+			}
 			private function handleMouseDown(event:MouseEvent):void
 			{
 				var ctrlKey:Boolean = StageUtils.ctrlKey;
 				var shiftKey:Boolean = StageUtils.shiftKey;
 				visualization.enableSelection.value = ctrlKey || shiftKey;
 				if (ctrlKey || shiftKey)
-					return;
+					return;	
+
 				var probedKey:IQualifiedKey = visualization.lastProbedKey;
 				if (!probedKey)
 					return;
-
+				_probedKeys = visualization.lastSelectedKeys || []; // save these keys 
 				var boundsArray:Array = _plotter.getDataBoundsFromRecordKey(probedKey);
 				if (!boundsArray || boundsArray.length == 0)
 					return;
 				var bounds:IBounds2D = boundsArray[0];
+				
+				//_probedKeys = visualization.lastSelectedKeys;
+				if (_probedKeys.indexOf(probedKey) < 0)
+					_probedKeys.push(probedKey);
+				trace(_probedKeys.length);
+				
 				_dragSourcePoint.x = bounds.getXCenter();
 				_dragSourcePoint.y = bounds.getYCenter();
-				//_probedKeys =
 				_probedKey = probedKey;
 				_isDragging = true;
+				
+//				_plotter.setDraggableLayerKeys(_probedKeys);
 			}
 			private function handleMouseUp(event:MouseEvent):void
 			{
+				visualization.enableSelection.value = false;
+				
 				// if we aren't dragging, return
 				if (_isDragging == false)
 					return;
-				// we are dragging, so update the dragged keys
+				
+				// stop dragging
 				_isDragging = false;
-				var keys:Array;
-				keys = [ _probedKey ];
-								
 				var screenPoint:Point = projectGlobalToScreen(event.stageX, event.stageY);
 				var dataPoint:Point = projectScreenPointToData(screenPoint);
 				var dx:Number = dataPoint.x - _dragSourcePoint.x;
 				var dy:Number = dataPoint.y - _dragSourcePoint.y;
-				_plotter.updateDraggedKeys(keys, dx, dy);				
+				_plotter.updateDraggedKeys(_probedKeys, dx, dy);				
 			}
 			private function setupContextMenu():void
 			{

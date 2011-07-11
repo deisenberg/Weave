@@ -112,7 +112,10 @@ package weave.visualization.plotters
 			}
 		}
 		
-		public function updateDraggedKeys(keys:Array, dx:Number, dy:Number):void
+		/**
+		 * Offset the x and y positions of the nodes with the corresponding keys in keys. 
+		 */		
+		public function updateDraggedKeys(keys:Array, dx:Number, dy:Number, runSpatialCallbacks:Boolean = true):void
 		{
 			for each (var key:IQualifiedKey in keys)
 			{
@@ -123,9 +126,30 @@ package weave.visualization.plotters
 				node.position.y += dy;
 			}
 			setOutputBounds();
-			_spatialCallbacks.triggerCallbacks();
+			if (runSpatialCallbacks)
+				_spatialCallbacks.triggerCallbacks();
 			getCallbackCollection(this).triggerCallbacks();
 		}
+
+//		/**
+//		 * Set the keys to be drawn in the draggable layer.
+//		 */
+//		public function setDraggableLayerKeys(keys:Array):void
+//		{
+//			_draggedKeys = keys.concat();
+//			// for each key, add the immediate neighbor to _draggedKeys
+//			for each (var key:IQualifiedKey in keys)
+//			{
+//				var node:GraphNode = _keyToNode[key];
+//				var connectedNodes:Vector.<GraphNode> = node.connections;
+//				for each (var neighbor:GraphNode in connectedNodes)
+//				{
+//					var neighborKey:IQualifiedKey = neighbor.key;
+//					if (_draggedKeys.indexOf(neighborKey) < 0)
+//						_draggedKeys.push(neighborKey);
+//				}
+//			}
+//		}
 		
 		/**
 		 * Continue the algorithm.
@@ -141,6 +165,12 @@ package weave.visualization.plotters
 				ErrorManager.reportError(e);
 			}
 		}
+		
+		/**
+		 * Run the force directed algorithm on only the keys.
+		 * @param keys An array of IQualifiedKey objects. If this is null, the algorithm will
+		 * be applied to every key.
+		 */
 		public function runForceDirect(keys:Array = null):void
 		{
 			try
@@ -201,6 +231,8 @@ package weave.visualization.plotters
 		public const shouldStop:LinkableBoolean = registerNonSpatialProperty(new LinkableBoolean(false)); // should the algorithm halt on the next iteration? 
 		public const algorithmRunning:LinkableBoolean = registerNonSpatialProperty(new LinkableBoolean(false)); // is an algorithm running?
 		
+		//private var _draggedKeys:Array = []; // the keys in the dragged layer
+		
 		private function handleIterations():void { }
 
 		// FINISH THESE
@@ -224,6 +256,7 @@ package weave.visualization.plotters
 			var count:int = 0;
 			var x:Number;
 			var y:Number;
+			var fullyDrawnNodes:Dictionary = new Dictionary();
 			
 			// loop through each node and draw it
 			for each (var key:IQualifiedKey in recordKeys)
@@ -249,12 +282,16 @@ package weave.visualization.plotters
 				
 				for each (var connectedNode:GraphNode in connections)
 				{
-					edgesGraphics.moveTo(xNode, yNode);
-					x = connectedNode.position.x;
-					y = connectedNode.position.y;
-					projectPoint(x, y);
-					edgesGraphics.lineTo(screenPoint.x, screenPoint.y);
+					if (fullyDrawnNodes[connectedNode] == undefined)
+					{						
+						edgesGraphics.moveTo(xNode, yNode);
+						x = connectedNode.position.x;
+						y = connectedNode.position.y;
+						projectPoint(x, y);
+						edgesGraphics.lineTo(screenPoint.x, screenPoint.y);
+					}
 				}
+				fullyDrawnNodes[node] = true;
 			}
 			destination.draw(edgesShape, null, null, null, null, false);
 			destination.draw(tempShape, null, null, null, null, false);

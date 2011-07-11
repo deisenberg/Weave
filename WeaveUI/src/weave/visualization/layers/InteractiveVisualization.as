@@ -434,19 +434,23 @@ package weave.visualization.layers
 
 				if ( isModeSelection(mode) )
 				{
-					// handle selection
-					if (mode == SELECT_MODE_REPLACE && mouseDragStageCoords.getWidth() == 0 && mouseDragStageCoords.getHeight() == 0)
+					// only if selection is enabled
+					if (enableSelection.value)
 					{
-						_layers = layers.getObjects(SelectablePlotLayer);
-						for (i = 0; i < _layers.length; i++)
+						// handle selection
+						if (mode == SELECT_MODE_REPLACE && mouseDragStageCoords.getWidth() == 0 && mouseDragStageCoords.getHeight() == 0)
 						{
-							// clear selection when drag area is empty
-							setSelectionKeys(_layers[i], []);
+							_layers = layers.getObjects(SelectablePlotLayer);
+							for (i = 0; i < _layers.length; i++)
+							{
+								// clear selection when drag area is empty
+								setSelectionKeys(_layers[i], []);
+							}
 						}
-					}
-					else
-					{
-						delayedHandleSelection();
+						else
+						{
+							delayedHandleSelection();
+						}
 					}
 				}
 				else if (mode == PAN_MODE)
@@ -605,6 +609,10 @@ package weave.visualization.layers
 		
 		protected function immediateHandleSelection():void
 		{
+			// don't set a selection or clear the probe keys if selection is disabled
+			if (!enableSelection.value)
+				return;
+			
 			var _layers:Array = layers.getObjects(SelectablePlotLayer); // bottom to top
 			// loop from bottom layer to top layer
 			for (var index:int = 0; index < _layers.length; index++)
@@ -719,6 +727,16 @@ package weave.visualization.layers
 			}
 		}
 		
+		private var _lastSelectedKeys:Array = null;
+		public function set lastSelectedKeys(a:Array):void
+		{
+			_lastSelectedKeys = a;
+		}
+		public function get lastSelectedKeys():Array
+		{
+			return _lastSelectedKeys ? _lastSelectedKeys.concat() : [];
+		}
+		
 		protected function setSelectionKeys(layer:SelectablePlotLayer, keys:Array, useMouseMode:Boolean = false):void
 		{
 			if (!Weave.properties.enableToolSelection.value || !enableSelection.value)
@@ -736,6 +754,7 @@ package weave.visualization.layers
 					keySet.removeKeys(keys);
 				else
 					keySet.replaceKeys(keys);
+				_lastSelectedKeys = keySet.keys.concat();
 			}
 		}
 		
@@ -768,6 +787,10 @@ package weave.visualization.layers
 		
 		protected function clearProbe():void
 		{
+			// don't clear the probe if selection is disabled
+			if (!enableSelection.value)
+				return;
+			
 			var spls:Array = layers.getObjects(SelectablePlotLayer);
 			for (var i:int = 0; i < spls.length; i++)
 				setProbeKeys(spls[i], emptyArray);

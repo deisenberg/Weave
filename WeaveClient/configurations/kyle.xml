@@ -43,7 +43,7 @@
       <GlobalObjectReference name="defaultColorBinColumn"/>
     </internalDynamicColumn>
     <ramp encoding="xml">
-      <colorRamp colorblindSafe="true" name="Blues" dataFormat="sequential" singlehue="true" category="basic" source="ColorBrewer">
+      <colorRamp singlehue="true" name="Blues" dataFormat="sequential" colorblindSafe="true" category="basic" source="ColorBrewer">
         <node color="0xEFF3FF" position="0"/>
         <node color="0xBDD7E7" position="0.25"/>
         <node color="0x6BAED6" position="0.5"/>
@@ -137,7 +137,7 @@
     <pageTitle>Sample Weave Configuration</pageTitle>
     <panelTitleFontBold>false</panelTitleFontBold>
     <panelTitleFontColor>16777215</panelTitleFontColor>
-    <panelTitleFontFamily>Verdana</panelTitleFontFamily>
+    <panelTitleFontFamily/>
     <panelTitleFontItalic>false</panelTitleFontItalic>
     <panelTitleFontSize>10</panelTitleFontSize>
     <panelTitleFontUnderline>false</panelTitleFontUnderline>
@@ -265,30 +265,30 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldAgricultureIndicators.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Year" keyType="Country Name" title="Year"/>
-        <attribute csvColumn="YearCode" keyType="Country Name" title="YearCode"/>
-        <attribute csvColumn="Country Name" keyType="Country Name" title="Country Name"/>
-        <attribute csvColumn="Country Code" keyType="Country Name" title="Country Code"/>
-        <attribute csvColumn="Agricultural machinery, tractors" keyType="Country Name" title="Agricultural machinery, tractors"/>
-        <attribute csvColumn="Agricultural machinery, tractors per 100 sq. km of arable land" keyType="Country Name" title="Agricultural machinery, tractors per 100 sq. km of arable land"/>
-        <attribute csvColumn="Agriculture value added per worker (constant 2000 US$)" keyType="Country Name" title="Agriculture value added per worker (constant 2000 US$)"/>
-        <attribute csvColumn="Cereal yield (kg per hectare)" keyType="Country Name" title="Cereal yield (kg per hectare)"/>
-        <attribute csvColumn="Crop production index (1999-2001 = 100)" keyType="Country Name" title="Crop production index (1999-2001 = 100)"/>
-        <attribute csvColumn="Economically active population in agriculture&#x9;(number)" keyType="Country Name" title="Economically active population in agriculture&#x9;(number)"/>
-        <attribute csvColumn="Fertilizer consumption (metric tons)" keyType="Country Name" title="Fertilizer consumption (metric tons)"/>
-        <attribute csvColumn="Food production index (1999-2001 = 100)" keyType="Country Name" title="Food production index (1999-2001 = 100)"/>
-        <attribute csvColumn="Land under cereal production (hectares)" keyType="Country Name" title="Land under cereal production (hectares)"/>
-        <attribute csvColumn="Livestock production index (1999-2001 = 100)" keyType="Country Name" title="Livestock production index (1999-2001 = 100)"/>
-        <attribute csvColumn="Agricultural land (% of land area)" keyType="Country Name" title="Agricultural land (% of land area)"/>
-        <attribute csvColumn="Agricultural land (sq. km)" keyType="Country Name" title="Agricultural land (sq. km)"/>
-        <attribute csvColumn="Arable land (% of land area)" keyType="Country Name" title="Arable land (% of land area)"/>
-        <attribute csvColumn="Arable land (hectares per person)" keyType="Country Name" title="Arable land (hectares per person)"/>
-        <attribute csvColumn="Arable land (hectares)" keyType="Country Name" title="Arable land (hectares)"/>
-        <attribute csvColumn="Forest area (% of land area)" keyType="Country Name" title="Forest area (% of land area)"/>
-        <attribute csvColumn="Forest area (sq. km)" keyType="Country Name" title="Forest area (sq. km)"/>
-        <attribute csvColumn="Land area (sq. km)" keyType="Country Name" title="Land area (sq. km)"/>
-        <attribute csvColumn="Permanent cropland (% of land area)" keyType="Country Name" title="Permanent cropland (% of land area)"/>
-        <attribute csvColumn="Surface area (sq. km)" keyType="Country Name" title="Surface area (sq. km)"/>
+        <attribute keyType="Country Name" csvColumn="Year" title="Year"/>
+        <attribute keyType="Country Name" csvColumn="YearCode" title="YearCode"/>
+        <attribute keyType="Country Name" csvColumn="Country Name" title="Country Name"/>
+        <attribute keyType="Country Name" csvColumn="Country Code" title="Country Code"/>
+        <attribute keyType="Country Name" csvColumn="Agricultural machinery, tractors" title="Agricultural machinery, tractors"/>
+        <attribute keyType="Country Name" csvColumn="Agricultural machinery, tractors per 100 sq. km of arable land" title="Agricultural machinery, tractors per 100 sq. km of arable land"/>
+        <attribute keyType="Country Name" csvColumn="Agriculture value added per worker (constant 2000 US$)" title="Agriculture value added per worker (constant 2000 US$)"/>
+        <attribute keyType="Country Name" csvColumn="Cereal yield (kg per hectare)" title="Cereal yield (kg per hectare)"/>
+        <attribute keyType="Country Name" csvColumn="Crop production index (1999-2001 = 100)" title="Crop production index (1999-2001 = 100)"/>
+        <attribute keyType="Country Name" csvColumn="Economically active population in agriculture&#x9;(number)" title="Economically active population in agriculture&#x9;(number)"/>
+        <attribute keyType="Country Name" csvColumn="Fertilizer consumption (metric tons)" title="Fertilizer consumption (metric tons)"/>
+        <attribute keyType="Country Name" csvColumn="Food production index (1999-2001 = 100)" title="Food production index (1999-2001 = 100)"/>
+        <attribute keyType="Country Name" csvColumn="Land under cereal production (hectares)" title="Land under cereal production (hectares)"/>
+        <attribute keyType="Country Name" csvColumn="Livestock production index (1999-2001 = 100)" title="Livestock production index (1999-2001 = 100)"/>
+        <attribute keyType="Country Name" csvColumn="Agricultural land (% of land area)" title="Agricultural land (% of land area)"/>
+        <attribute keyType="Country Name" csvColumn="Agricultural land (sq. km)" title="Agricultural land (sq. km)"/>
+        <attribute keyType="Country Name" csvColumn="Arable land (% of land area)" title="Arable land (% of land area)"/>
+        <attribute keyType="Country Name" csvColumn="Arable land (hectares per person)" title="Arable land (hectares per person)"/>
+        <attribute keyType="Country Name" csvColumn="Arable land (hectares)" title="Arable land (hectares)"/>
+        <attribute keyType="Country Name" csvColumn="Forest area (% of land area)" title="Forest area (% of land area)"/>
+        <attribute keyType="Country Name" csvColumn="Forest area (sq. km)" title="Forest area (sq. km)"/>
+        <attribute keyType="Country Name" csvColumn="Land area (sq. km)" title="Land area (sq. km)"/>
+        <attribute keyType="Country Name" csvColumn="Permanent cropland (% of land area)" title="Permanent cropland (% of land area)"/>
+        <attribute keyType="Country Name" csvColumn="Surface area (sq. km)" title="Surface area (sq. km)"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,"Agricultural machinery, tractors","Agricultural machinery, tractors per 100 sq. km of arable land",Agriculture value added per worker (constant 2000 US$),Cereal yield (kg per hectare),Crop production index (1999-2001 = 100),Economically active population in agriculture	(number),Fertilizer consumption (metric tons),Food production index (1999-2001 = 100),Land under cereal production (hectares),Livestock production index (1999-2001 = 100),Agricultural land (% of land area),Agricultural land (sq. km),Arable land (% of land area),Arable land (hectares per person),Arable land (hectares),Forest area (% of land area),Forest area (sq. km),Land area (sq. km),Permanent cropland (% of land area),Surface area (sq. km)
@@ -536,21 +536,21 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldPopulationIndicators.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Year" keyType="Country Code" title="Year"/>
-        <attribute csvColumn="YearCode" keyType="Country Code" title="YearCode"/>
-        <attribute csvColumn="Country Name" keyType="Country Code" title="Country Name"/>
-        <attribute csvColumn="Country Code" keyType="Country Code" title="Country Code"/>
-        <attribute csvColumn="Population ages 0-14 (% of total)" keyType="Country Code" title="Population ages 0-14 (% of total)"/>
-        <attribute csvColumn="Population ages 15-64 (% of total)" keyType="Country Code" title="Population ages 15-64 (% of total)"/>
-        <attribute csvColumn="Population ages 65 and above (% of total)" keyType="Country Code" title="Population ages 65 and above (% of total)"/>
-        <attribute csvColumn="Population density (people per sq. km)" keyType="Country Code" title="Population density (people per sq. km)"/>
-        <attribute csvColumn="Population growth (annual %)" keyType="Country Code" title="Population growth (annual %)"/>
-        <attribute csvColumn="Population in the largest city (% of urban population)" keyType="Country Code" title="Population in the largest city (% of urban population)"/>
-        <attribute csvColumn="Population, female (% of total)" keyType="Country Code" title="Population, female (% of total)"/>
-        <attribute csvColumn="Rural population (% of total population)" keyType="Country Code" title="Rural population (% of total population)"/>
-        <attribute csvColumn="Urban population (% of total)" keyType="Country Code" title="Urban population (% of total)"/>
-        <attribute csvColumn="Urban population growth (annual %)" keyType="Country Code" title="Urban population growth (annual %)"/>
-        <attribute csvColumn="Rural population growth (annual %)" keyType="Country Code" title="Rural population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Year" title="Year"/>
+        <attribute keyType="Country Code" csvColumn="YearCode" title="YearCode"/>
+        <attribute keyType="Country Code" csvColumn="Country Name" title="Country Name"/>
+        <attribute keyType="Country Code" csvColumn="Country Code" title="Country Code"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 0-14 (% of total)" title="Population ages 0-14 (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 15-64 (% of total)" title="Population ages 15-64 (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 65 and above (% of total)" title="Population ages 65 and above (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population density (people per sq. km)" title="Population density (people per sq. km)"/>
+        <attribute keyType="Country Code" csvColumn="Population growth (annual %)" title="Population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Population in the largest city (% of urban population)" title="Population in the largest city (% of urban population)"/>
+        <attribute keyType="Country Code" csvColumn="Population, female (% of total)" title="Population, female (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Rural population (% of total population)" title="Rural population (% of total population)"/>
+        <attribute keyType="Country Code" csvColumn="Urban population (% of total)" title="Urban population (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Urban population growth (annual %)" title="Urban population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Rural population growth (annual %)" title="Rural population growth (annual %)"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,Population ages 0-14 (% of total),Population ages 15-64 (% of total),Population ages 65 and above (% of total),Population density (people per sq. km),Population growth (annual %),Population in the largest city (% of urban population),"Population, female (% of total)",Rural population (% of total population),Urban population (% of total),Urban population growth (annual %),Rural population growth (annual %)
@@ -798,21 +798,21 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="WorldPopulationIndicators2.csv">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Year" keyType="Country Code" title="Year"/>
-        <attribute csvColumn="YearCode" keyType="Country Code" title="YearCode"/>
-        <attribute csvColumn="Country Name" keyType="Country Code" title="Country Name"/>
-        <attribute csvColumn="Country Code" keyType="Country Code" title="Country Code"/>
-        <attribute csvColumn="Population ages 0-14 (% of total)" keyType="Country Code" title="Population ages 0-14 (% of total)"/>
-        <attribute csvColumn="Population ages 15-64 (% of total)" keyType="Country Code" title="Population ages 15-64 (% of total)"/>
-        <attribute csvColumn="Population ages 65 and above (% of total)" keyType="Country Code" title="Population ages 65 and above (% of total)"/>
-        <attribute csvColumn="Population density (people per sq. km)" keyType="Country Code" title="Population density (people per sq. km)"/>
-        <attribute csvColumn="Population growth (annual %)" keyType="Country Code" title="Population growth (annual %)"/>
-        <attribute csvColumn="Population in the largest city (% of urban population)" keyType="Country Code" title="Population in the largest city (% of urban population)"/>
-        <attribute csvColumn="Population, female (% of total)" keyType="Country Code" title="Population, female (% of total)"/>
-        <attribute csvColumn="Rural population (% of total population)" keyType="Country Code" title="Rural population (% of total population)"/>
-        <attribute csvColumn="Urban population (% of total)" keyType="Country Code" title="Urban population (% of total)"/>
-        <attribute csvColumn="Urban population growth (annual %)" keyType="Country Code" title="Urban population growth (annual %)"/>
-        <attribute csvColumn="Rural population growth (annual %)" keyType="Country Code" title="Rural population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Year" title="Year"/>
+        <attribute keyType="Country Code" csvColumn="YearCode" title="YearCode"/>
+        <attribute keyType="Country Code" csvColumn="Country Name" title="Country Name"/>
+        <attribute keyType="Country Code" csvColumn="Country Code" title="Country Code"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 0-14 (% of total)" title="Population ages 0-14 (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 15-64 (% of total)" title="Population ages 15-64 (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population ages 65 and above (% of total)" title="Population ages 65 and above (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Population density (people per sq. km)" title="Population density (people per sq. km)"/>
+        <attribute keyType="Country Code" csvColumn="Population growth (annual %)" title="Population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Population in the largest city (% of urban population)" title="Population in the largest city (% of urban population)"/>
+        <attribute keyType="Country Code" csvColumn="Population, female (% of total)" title="Population, female (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Rural population (% of total population)" title="Rural population (% of total population)"/>
+        <attribute keyType="Country Code" csvColumn="Urban population (% of total)" title="Urban population (% of total)"/>
+        <attribute keyType="Country Code" csvColumn="Urban population growth (annual %)" title="Urban population growth (annual %)"/>
+        <attribute keyType="Country Code" csvColumn="Rural population growth (annual %)" title="Rural population growth (annual %)"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Year,YearCode,Country Name,Country Code,Population ages 0-14 (% of total),Population ages 15-64 (% of total),Population ages 65 and above (% of total),Population density (people per sq. km),Population growth (annual %),Population in the largest city (% of urban population),"Population, female (% of total)",Rural population (% of total population),Urban population (% of total),Urban population growth (annual %),Rural population growth (annual %)
@@ -1054,9 +1054,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="Nodes">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Id" keyType="Nodes" title="Id"/>
-        <attribute csvColumn="Label" keyType="Nodes" title="Label"/>
-        <attribute csvColumn="Value" keyType="Nodes" title="Value"/>
+        <attribute keyType="Nodes" csvColumn="Id" title="Id"/>
+        <attribute keyType="Nodes" csvColumn="Label" title="Label"/>
+        <attribute keyType="Nodes" csvColumn="Value" title="Value"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Id,Label,Value
@@ -1072,10 +1072,10 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="Edges">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Id" keyType="Edges" title="Id"/>
-        <attribute csvColumn="Source" keyType="Edges" title="Source"/>
-        <attribute csvColumn="Target" keyType="Edges" title="Target"/>
-        <attribute csvColumn="Weight" keyType="Edges" title="Weight"/>
+        <attribute keyType="Edges" csvColumn="Id" title="Id"/>
+        <attribute keyType="Edges" csvColumn="Source" title="Source"/>
+        <attribute keyType="Edges" csvColumn="Target" title="Target"/>
+        <attribute keyType="Edges" csvColumn="Weight" title="Weight"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Id,Source,Target,Weight
@@ -1090,7 +1090,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="GNUTELLA08-NODES TRUNCATED">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Node ID" keyType="GNUTELLA08-NODES TRUNCATED" title="Node ID"/>
+        <attribute keyType="GNUTELLA08-NODES TRUNCATED" csvColumn="Node ID" title="Node ID"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -1660,9 +1660,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="GNUTELLA08-EDGES TRUNCATED">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Edge ID" keyType="GNUTELLA08-EDGES TRUNCATED" title="Edge ID"/>
-        <attribute csvColumn="From" keyType="GNUTELLA08-EDGES TRUNCATED" title="From"/>
-        <attribute csvColumn="To" keyType="GNUTELLA08-EDGES TRUNCATED" title="To"/>
+        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" csvColumn="Edge ID" title="Edge ID"/>
+        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" csvColumn="From" title="From"/>
+        <attribute keyType="GNUTELLA08-EDGES TRUNCATED" csvColumn="To" title="To"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -2582,7 +2582,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes3">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Node ID" keyType="nodes3" title="Node ID"/>
+        <attribute keyType="nodes3" csvColumn="Node ID" title="Node ID"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -2807,9 +2807,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges3">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Edge ID" keyType="edges3" title="Edge ID"/>
-        <attribute csvColumn="From" keyType="edges3" title="From"/>
-        <attribute csvColumn="To" keyType="edges3" title="To"/>
+        <attribute keyType="edges3" csvColumn="Edge ID" title="Edge ID"/>
+        <attribute keyType="edges3" csvColumn="From" title="From"/>
+        <attribute keyType="edges3" csvColumn="To" title="To"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -3174,7 +3174,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes4">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="id" keyType="nodes4" title="id"/>
+        <attribute keyType="nodes4" csvColumn="id" title="id"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>id
@@ -3195,8 +3195,8 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges4">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="from" keyType="edges4" title="from"/>
-        <attribute csvColumn="to" keyType="edges4" title="to"/>
+        <attribute keyType="edges4" csvColumn="from" title="from"/>
+        <attribute keyType="edges4" csvColumn="to" title="to"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>from,to
@@ -3222,7 +3222,7 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="nodes5">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Node ID" keyType="nodes5" title="Node ID"/>
+        <attribute keyType="nodes5" csvColumn="Node ID" title="Node ID"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Node ID
@@ -3343,9 +3343,9 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
   <CSVDataSource name="edges5">
     <attributeHierarchy encoding="xml">
       <hierarchy>
-        <attribute csvColumn="Edge ID" keyType="edges5" title="Edge ID"/>
-        <attribute csvColumn="From" keyType="edges5" title="From"/>
-        <attribute csvColumn="To" keyType="edges5" title="To"/>
+        <attribute keyType="edges5" csvColumn="Edge ID" title="Edge ID"/>
+        <attribute keyType="edges5" csvColumn="From" title="From"/>
+        <attribute keyType="edges5" csvColumn="To" title="To"/>
       </hierarchy>
     </attributeHierarchy>
     <csvDataString>Edge ID,From,To
@@ -3497,8 +3497,8 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
         <axisFontUnderline>false</axisFontUnderline>
         <dataBounds>
           <xMax>365.5480984340044</xMax>
-          <xMin>-203.57941834451913</xMin>
-          <yMax>119.46308724832215</yMax>
+          <xMin>-203.57941834451918</xMin>
+          <yMax>119.46308724832224</yMax>
           <yMin>-287.6957494407159</yMin>
         </dataBounds>
         <defaultMouseMode>InteractiveVisualization.SELECT_MODE_REPLACE</defaultMouseMode>
@@ -3630,8 +3630,8 @@ Google Maps|http://maps.google.com/maps?t=h&amp;q=</searchServiceURLs>
                     </weight>
                   </SolidLineStyle>
                 </lineStyle>
-                <maxIterations>50</maxIterations>
-                <minimumEnergy>0.0001</minimumEnergy>
+                <maxIterations>0</maxIterations>
+                <minimumEnergy>1</minimumEnergy>
                 <nodesColumn encoding="dynamic">
                   <ReferencedColumn>
                     <dynamicColumnReference encoding="dynamic">

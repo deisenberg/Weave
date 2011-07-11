@@ -167,14 +167,14 @@
 
 			private function handle25MoreIterations(event:ContextMenuEvent):void
 			{
-				_plotter.maxIterations.value += 25;
+				_plotter.maxIterations.value = 25;
 				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
 				var keys:Array = (keySet && keySet.keys.length > 0) ? keySet.keys : null;
 				_plotter.continueComputation(keys);
 			}
 			private function handle100MoreIterations(event:ContextMenuEvent):void
 			{
-				_plotter.maxIterations.value += 100;
+				_plotter.maxIterations.value = 100;
 				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
 				var keys:Array = (keySet && keySet.keys.length > 0) ? keySet.keys : null;
 				_plotter.continueComputation(keys);
@@ -183,7 +183,7 @@
 			{
 				var keySet:IKeySet = plotLayer.selectionFilter.internalObject as IKeySet;
 				var keys:Array = (keySet && keySet.keys.length > 0)? keySet.keys : null;
-				_plotter.maxIterations.value += 25;
+				_plotter.maxIterations.value = 25;
 				_plotter.runForceDirect(keySet.keys);
 			}
 			private function handleResetPositions(event:ContextMenuEvent):void

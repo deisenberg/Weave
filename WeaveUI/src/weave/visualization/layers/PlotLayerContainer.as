@@ -24,6 +24,7 @@ package weave.visualization.layers
 	import mx.containers.Canvas;
 	
 	import weave.api.core.ILinkableObject;
+	import weave.api.getCallbackCollection;
 	import weave.api.newLinkableChild;
 	import weave.api.primitives.IBounds2D;
 	import weave.api.registerLinkableChild;
@@ -171,6 +172,7 @@ package weave.visualization.layers
 
 		protected function updateFullDataBounds():void
 		{
+			tempBounds.copyFrom(fullDataBounds);
 			fullDataBounds.reset();
 			var _layers:Array;
 			if (includeNonSelectableLayersInAutoZoom.value)
@@ -192,6 +194,8 @@ package weave.visualization.layers
 				fullDataBounds.includeBounds(bg);
 				//trace(fullDataBounds);
 			}
+			if (!tempBounds.equals(fullDataBounds))
+				getCallbackCollection(this).triggerCallbacks();
 		}
 		
 		/**

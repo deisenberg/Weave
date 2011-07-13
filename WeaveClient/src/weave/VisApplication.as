@@ -24,6 +24,7 @@ package weave
 	import flash.events.ContextMenuEvent;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.events.TimerEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
 	import flash.net.FileFilter;
@@ -34,11 +35,15 @@ package weave
 	import flash.system.System;
 	import flash.ui.ContextMenu;
 	import flash.ui.ContextMenuItem;
+	import flash.utils.Timer;
 	import flash.utils.getQualifiedClassName;
 	
 	import mx.binding.utils.BindingUtils;
+	import mx.containers.HBox;
 	import mx.containers.VDividedBox;
 	import mx.controls.Alert;
+	import mx.controls.Button;
+	import mx.controls.HSlider;
 	import mx.controls.ProgressBar;
 	import mx.controls.ProgressBarLabelPlacement;
 	import mx.controls.TabBar;
@@ -50,6 +55,8 @@ package weave
 	import mx.rpc.AsyncToken;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
+	import mx.skins.halo.HaloBorder;
+	import mx.utils.ObjectUtil;
 	
 	import weave.KeySetContextMenuItems;
 	import weave.Reports.WeaveReport;
@@ -63,11 +70,14 @@ package weave
 	import weave.api.getCallbackCollection;
 	import weave.api.getSessionState;
 	import weave.api.services.IURLRequestUtils;
+	import weave.api.setSessionState;
 	import weave.compiler.BooleanLib;
 	import weave.compiler.MathLib;
 	import weave.core.DynamicState;
 	import weave.core.ErrorManager;
 	import weave.core.LinkableBoolean;
+	import weave.core.SessionManager;
+	import weave.core.SessionStateLog;
 	import weave.core.StageUtils;
 	import weave.core.WeaveJavaScriptAPI;
 	import weave.core.weave_internal;
@@ -495,8 +505,10 @@ package weave
 			
 			//drawConnection();
 			loadPage();
+
 		}
 		
+
 //		private function handleTabBarResize(event:ResizeEvent):void
 //		{
 //			_viewTabBar.move(0,this.height);
@@ -804,6 +816,7 @@ package weave
 			if (Weave.properties.enableSessionMenu.value)
 			{
 				_sessionMenu = _weaveMenu.addMenuToMenuBar("Session", false);
+				
 				if (Weave.properties.enableSessionBookmarks.value)
 				{
 					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Create session state save point", saveAction));
@@ -816,14 +829,12 @@ package weave
 				{
 					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Edit session state", SessionStateEditor.openDefaultEditor));
 					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Copy session state to clipboard", copySessionStateToClipboard));
-				}
-				
-				_weaveMenu.addSeparatorToMenu(_sessionMenu);
-				
-				if (Weave.properties.enableSessionImport.value)
-					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Import session state ...", handleImportSessionState, null, true));
-				if (Weave.properties.enableSessionExport.value)
+					
+					_weaveMenu.addSeparatorToMenu(_sessionMenu);
+					
+					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Import session state ...", handleImportSessionState));
 					_weaveMenu.addMenuItemToMenu(_sessionMenu, new WeaveMenuItem("Export session state...", handleExportSessionState));
+				}
 
 				_weaveMenu.addSeparatorToMenu(_sessionMenu);
 
@@ -1413,15 +1424,67 @@ package weave
 				Weave.properties.enableMenuBar.value = true;
 				Weave.properties.enableSessionMenu.value = true;
 				Weave.properties.enableSessionEdit.value = true;
-				Weave.properties.enableSessionImport.value = true;
-				Weave.properties.enableSessionExport.value = true;
 				Weave.properties.enableUserPreferences.value = true;
 			}
 			
 			// enable JavaScript API after initial session state has loaded.
 			WeaveAPI.initializeExternalInterface();
+			
+			if (getEditableSettingFromURL())
+				addHistorySlider();
 		}
 		
+		private var log:SessionStateLog;
+		private function addHistorySlider():void
+		{
+			// beta undo/redo feature
+			log = new SessionStateLog(Weave.root);
+			
+			var hb:HBox = new HBox();
+			hb.percentWidth = 100;
+			addChildAt(hb, 0);
+			
+			var undoButton:Button = new Button();
+			undoButton.label="<";
+			undoButton.addEventListener(MouseEvent.CLICK,function(..._):void{ log.undo(); });
+			hb.addChild(undoButton);
+			
+			var redoButton:Button = new Button();
+			redoButton.label=">";
+			redoButton.addEventListener(MouseEvent.CLICK,function(..._):void{ log.redo(); });
+			hb.addChild(redoButton);
+			
+			var hs:HSlider = new HSlider();
+			hb.addChild(hs);
+			hs.percentWidth = 100;
+			hs.setStyle("bottom", 0);
+			hs.minimum = 0;
+			hs.liveDragging = true;
+			hs.tickInterval = 1;
+			hs.snapInterval = 1;
+			hs.addEventListener(Event.CHANGE, handleHistorySlider);
+			function handleHistorySlider():void
+			{
+				var delta:int = hs.value - log.undoHistory.length;
+				while (delta < 0)
+				{
+					log.undo();
+					delta++;
+				}
+				while (delta > 0)
+				{
+					log.redo();
+					delta--;
+				}
+			}
+			
+			getCallbackCollection(log).addImmediateCallback(this, updateHistorySlider, null, true);
+			function updateHistorySlider():void
+			{
+				hs.maximum = log.undoHistory.length + log.redoHistory.length;
+				hs.value = log.undoHistory.length;
+			}
+		}
 
 		
 		/** BEGIN CONTEXT MENU CODE **/

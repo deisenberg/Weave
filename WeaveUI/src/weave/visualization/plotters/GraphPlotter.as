@@ -127,7 +127,7 @@ package weave.visualization.plotters
 			}
 			setOutputBounds();
 			if (runSpatialCallbacks)
-				_spatialCallbacks.triggerCallbacks();
+				spatialCallbacks.triggerCallbacks();
 			getCallbackCollection(this).triggerCallbacks();
 		}
 
@@ -431,7 +431,7 @@ package weave.visualization.plotters
 				node.velocity.y = 0;
 			}
 			
-			_spatialCallbacks.triggerCallbacks();
+			spatialCallbacks.triggerCallbacks();
 			getCallbackCollection(this).triggerCallbacks();
 		}
 		
@@ -549,7 +549,7 @@ package weave.visualization.plotters
 			{
 				shouldStop.value = false;
 				algorithmRunning.value = false;
-				_spatialCallbacks.triggerCallbacks();
+				spatialCallbacks.triggerCallbacks();
 				_iterations = 0;
 				return;
 			}
@@ -653,7 +653,7 @@ package weave.visualization.plotters
 			
 			// if we reached equilibrium, rebuild the spatial index
 			if (reachedEquilibrium == true || _iterations >= maxIterations.value)
-				_spatialCallbacks.triggerCallbacks();
+				spatialCallbacks.triggerCallbacks();
 			else // or call later to finish
 				StageUtils.callLater(this, forceDirected, [keys], true);
 			
